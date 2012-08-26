@@ -1,0 +1,6 @@
+
+--file-type c --file-type C --file-type cpp --file-type CPP --file-type cxx --file-type cc --file-type cp 
+--file-type h --file-type H --file-type hpp --file-type HPP --file-type hxx --file-type hh --file-type hp   
+
+--prune-dir svn --prune-dir .git --prune-dir CMakeFiles
+

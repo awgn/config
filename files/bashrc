@@ -1,0 +1,47 @@
+# ~/.bashrc: executed by bash(1) for non-login shells.
+
+shopt -s histappend
+shopt -s cdspell
+shopt -s globstar
+shopt -s checkwinsize
+
+set -o ignoreeof
+
+umask 022
+
+if [ -f /etc/bash_completion ]; then
+     . /etc/bash_completion
+fi
+
+export CDPATH='.:/opt:/opt/CommProve:/media/sf_Shared/:/media/sf_Shared/GitHub/'
+
+export HISTIGNORE="&:ls:ls *:cd *:[bf]g:exit"
+
+HISTSIZE=10000
+HISTFILESIZE=10000
+
+export TERM=xterm-256color
+
+# You may uncomment the following lines if you want `ls' to be colorized:
+
+export LS_OPTIONS='--color=auto'
+export COLUMNS
+
+eval "`dircolors`"
+alias ls='ls $LS_OPTIONS'
+alias ll='ls $LS_OPTIONS -l'
+alias l='ls $LS_OPTIONS -lA'
+
+# Some more alias to avoid making mistakes:
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'  
+
+# Prompt
+
+export PS1='\u :: \[\033[1;32m\]$(/usr/local/bin/git-prompt path)\[\033[0m\]$(/usr/local/bin/git-prompt git) -> '
+
+# Keep synchronized history...
+
+export PROMPT_COMMAND='history -a'
