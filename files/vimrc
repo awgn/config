@@ -346,8 +346,7 @@ augroup END
         noremap <leader>s :%s/\<<C-R><C-W>\>/
         noremap <leader>S :%s/\<\>/<Left><Left><Left>
 
-        noremap <leader>g :grep -r -w 
-        noremap <leader>G :grep -r -w <C-R><C-W> 
+        noremap <leader>g :grep -r -w <C-R><C-W> 
 
         noremap <leader>f :CtrlP<CR>
         noremap <leader>b :CtrlPBuffer<CR>
