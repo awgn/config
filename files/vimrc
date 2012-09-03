@@ -6,19 +6,22 @@
 " general {
 
         call pathogen#infect()
+        
+        set nocompatible        	
+
         syntax enable
 
         filetype on
         filetype plugin on
         filetype indent on
 
-        set nocompatible        	
-
         set backspace=indent,eol,start 
         
         set completeopt=menu,longest
         set complete=.,w,b,t,i
-
+        
+        set shortmess+=at
+ 
         set nofoldenable
         set novisualbell                
         set hidden
@@ -51,12 +54,16 @@
         set ruler
         set magic
         set mps+=<:> " this is great for C++ template metaprogramming
+        
+        set wildignore+=*/.git/*,*/.hg/*,*/.svn/*        " Linux/MacOSX
         set wildignore+=*.o,*.so,*.ko,*.bak
+        
         set nowrap
         set guioptions=acm
 
         set foldmethod=syntax
         set virtualedit=all
+
         set stl=%f\ %m\ %r\ Line:\ %l/%L[%p%%]\ Col:\ %c\ Buf:\ #%n\ [%b][0x%B]
 
         set laststatus=2
@@ -64,7 +71,7 @@
         set clipboard=unnamed
         set viminfo='10,<10000,:100,%,s1000,n~/.viminfo
 
-        set nospell
+        set spell
 
         set grepprg=cgrep
 
@@ -97,8 +104,6 @@
         else
                 " colorscheme github
                 " colorscheme mustang
-                " let g:solarized_termcolors=256
-                " set background=dark
                 " colorscheme solarized
                 " colorscheme gummybears
                 " colorscheme jellybeans
@@ -109,30 +114,38 @@
 "}
 
 
-" global {
+" plugin config {
         
         " this to avoid spurious highlight with c++11 lambdas 
         let c_no_curly_error=1
 
-        let Tlist_Use_Right_Window = 1
+        let Tlist_Use_Right_Window  = 1
 
-        let g:load_doxygen_syntax = 1
+        let g:load_doxygen_syntax   = 1
 
-        let g:clang_complete_auto =  0
-        let g:clang_complete_copen = 1
-        let g:clang_user_options = '-std=c++11'
+        " tagbar
+        
+        let g:tagbar_width = 30
+        
+        " clang completion...
+        
+        let g:clang_complete_auto   = 0
+        let g:clang_complete_copen  = 1
+        let g:clang_user_options    = '-std=c++11'
 
-        let g:my_ctags_options    = [ '--sort=foldcase', '--languages=C,C++', '--c++-kinds=+plx', '--fields=+iaS', '--extra=+q', '-I __attribute__+' ]
+        " my ctags options...
+        let g:my_ctags_options      = [ '--sort=foldcase', '--languages=C,C++', '--c++-kinds=+plx', '--fields=+iaS', '--extra=+q', '-I __attribute__+' ]
+
+        " ctrl+p
         let g:ctrlp_map = ''
+        let g:ctrlp_dotfiles = 0
+
+        " powerline
         set encoding=utf-8
         let g:Powerline_symbols = 'fancy'
         
+
         let g:haddock_browser="/usr/bin/w3m"
-" }
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" plugins {
 
         runtime! ftplugin/man.vim
         runtime! ftplugin/gzip.vim
@@ -145,14 +158,13 @@ if has("autocmd")
 
         autocmd BufNewFile,BufRead *.cpp set syntax=cpp
         
-        " save time-consuming foldmethod=syntax while in insert mode... (fast
-        " paste!)
-        "
+        " save time-consuming foldmethod=syntax while in insert mode... 
+        
         autocmd InsertEnter * if !exists('w:last_fdm') | let w:last_fdm=&foldmethod | setlocal foldmethod=manual | endif
         autocmd InsertLeave,WinLeave * if exists('w:last_fdm') | let &l:foldmethod=w:last_fdm | unlet w:last_fdm | endif
 
         " disable syntax on very huge files...
-        "
+        
         autocmd BufReadPre *  if getfsize(expand('<afile>')) > 1000000 | syntax off | endif
 
         autocmd BufEnter * set tags=~/.vim/system-tags,./tags,../tags,tags,TAGS
@@ -186,11 +198,6 @@ if has("autocmd")
         autocmd FileType haskell set tabstop=4 
         autocmd FileType haskell set iskeyword=a-z,A-Z,48-57,_,'
 
-        "autocmd FileType haskell nmap <C-c><C-l> :GhciRange<CR>
-        "autocmd FileType haskell vmap <C-c><C-l> :GhciRange<CR>
-        "autocmd FileType haskell nmap <C-c><C-f> :GhciFile<CR>
-        "autocmd FileType haskell nmap <C-c><C-r> :GhciReload<CR>
-        
         autocmd FileType make set noexpandtab
         autocmd FileType make set shiftwidth=8
 
@@ -222,8 +229,8 @@ func Eatchar(pat)
 endfunc
 
 " ctags functions 
-"
-function! UpdateTags()
+
+function! UpdateCppTags()
         exec ":silent !echo Updating ctags..."
         exec ":silent !ctags -R " . join(g:my_ctags_options, ' ')    
         echohl StatusLine | echo "Ctags updated." | echohl None
@@ -243,6 +250,7 @@ endfunction
 
 
 " used to track the quickfix window
+
 augroup QFixToggle
  autocmd!
  autocmd BufWinEnter quickfix let g:qfix_win = bufnr("$")
@@ -256,6 +264,7 @@ augroup END
  
     command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=hide noswapfile | R !<args>
     command! -bang -nargs=? QFix call QFixToggle(<bang>0)
+    command! UpdateTags call s:UpdateCppTags()
 
 " }
 
@@ -293,7 +302,7 @@ augroup END
         iab __G __GXX_EXPERIMENTAL_CXX0X__
 
         " haskell useful extensions..
-        "
+        
         iab Leq {-# LANGUAGE ExistentialQuantification #-}
         iab Lfi {-# LANGUAGE FlexibleInstances #-}
         iab Lmp {-# LANGUAGE MultiParamTypeClasses #-}
@@ -303,27 +312,28 @@ augroup END
 
 " mapping {
         
+        " set mapleader
+        
+        let mapleader = ","
+        
         " C++ ass'instant: -> github.com/awgn/ass 
-        "
         
         noremap <F1>    :AssGuard<CR>
         noremap <F2>    :AssGen<CR> 
         
-        
         " search for the next class\struct declaration..
-        "
         
         noremap <F3>    :/\(\<class\>\\|\<struct\>\)\s*[a-zA-Z_][a-zA-Z0-9_]*.*\_s*{<CR> 
         noremap <C-F3>  :?\(\<class\>\\|\<struct\>\)\s*[a-zA-Z_][a-zA-Z0-9_]*.*\_s*{<CR> 
 
+        noremap <F5>    :UpdateTags<CR>
         noremap <F6>    :cnext<CR>
         noremap <S-F6>  :cprev<CR>
 
         noremap <F7>    :make<CR>
         noremap <F8>    :QFix<CR>
-
-        noremap <F9>    :call UpdateTags()<CR>
-
+        noremap <F9>    :NERDTreeToggle<CR>
+        
         noremap <F10>   :Bufferlist<CR>
         noremap <S-F10> :AssIncludeThis<CR>
 
@@ -331,11 +341,6 @@ augroup END
         noremap <S-F11> :AssGccRun <CR>
 
         noremap <F12>   :TagbarToggle<CR>
-        noremap <S-F12> :NERDTreeToggle<CR>
-
-        " set mapleader
-        "
-        let mapleader = ","
 
         noremap <leader>c :set syntax=cpp<CR>
         noremap <leader>r :%s/\r//g<CR>
@@ -348,13 +353,7 @@ augroup END
 
         noremap <leader>g :grep -r -w <C-R><C-W> 
 
-        noremap <leader>f :CtrlP<CR>
-        noremap <leader>b :CtrlPBuffer<CR>
-        noremap <leader>r :CtrlPMRUFiles<CR>
-        noremap <leader>p :CtrlPMixed<CR>
-
-        "nnoremap <leader>ev :vsplit $MYVIMRC<cr>
-        "nnoremap <leader>sv :source $MYVIMRC<cr>
+        noremap <leader>p :CtrlP<CR>
 
         vmap Q gq
         nmap Q gqap
