@@ -75,9 +75,9 @@
 
         set grepprg=cgrep
 
-        set ignorecase
-        set infercase
-        set smartcase
+        " set ignorecase 
+        " set smartcase  
+        " set infercase
 
         set path+=/usr/include
         set path+=/usr/include/c++/4.7
@@ -92,6 +92,8 @@
         set smarttab
 
         set t_Co=256
+
+        set timeoutlen=1000 ttimeoutlen=50
 
         if has("gui_running")
                 set guifont=Terminus\ 10
@@ -117,6 +119,7 @@
 " plugin config {
         
         " this to avoid spurious highlight with c++11 lambdas 
+        
         let c_no_curly_error=1
 
         let Tlist_Use_Right_Window  = 1
@@ -134,23 +137,26 @@
         let g:clang_user_options    = '-std=c++11'
 
         " my ctags options...
+        
         let g:my_ctags_options      = [ '--sort=foldcase', '--languages=C,C++', '--c++-kinds=+plx', '--fields=+iaS', '--extra=+q', '-I __attribute__+' ]
 
         " ctrl+p
+        
         let g:ctrlp_map = ''
         let g:ctrlp_dotfiles = 0
 
         " powerline
+        
         set encoding=utf-8
         let g:Powerline_symbols = 'fancy'
         
-
         let g:haddock_browser="/usr/bin/w3m"
 
         runtime! ftplugin/man.vim
         runtime! ftplugin/gzip.vim
         runtime! ftplugin/taglist.vim 
 "}
+
 
 " automatic {
 
@@ -168,7 +174,6 @@ if has("autocmd")
         autocmd BufReadPre *  if getfsize(expand('<afile>')) > 1000000 | syntax off | endif
 
         autocmd BufEnter * set tags=~/.vim/system-tags,./tags,../tags,tags,TAGS
-        autocmd BufEnter *.hs compiler ghc
 
         autocmd QuickFixCmdPost [^l]* nested cwindow
         autocmd QuickFixCmdPost    l* nested lwindow
@@ -190,12 +195,12 @@ if has("autocmd")
         autocmd FileType c set formatoptions=tcqlron
         autocmd FileType c set noexpandtab
 
-        autocmd FileType ruby  set shiftwidth=4 
-        autocmd FileType ruby  set tabstop=4 
-        autocmd FileType ruby  set iskeyword=a-z,A-Z,48-57,_
+        autocmd FileType ruby set shiftwidth=4 
+        autocmd FileType ruby set tabstop=4 
+        autocmd FileType ruby set iskeyword=a-z,A-Z,48-57,_
 
-        autocmd FileType haskell set shiftwidth=4 
-        autocmd FileType haskell set tabstop=4 
+        autocmd FileType haskell set shiftwidth=8 
+        autocmd FileType haskell set tabstop=8 
         autocmd FileType haskell set iskeyword=a-z,A-Z,48-57,_,'
 
         autocmd FileType make set noexpandtab
@@ -264,7 +269,7 @@ augroup END
  
     command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=hide noswapfile | R !<args>
     command! -bang -nargs=? QFix call QFixToggle(<bang>0)
-    command! UpdateTags call s:UpdateCppTags()
+    command! UpdateTags call UpdateCppTags()
 
 " }
 
@@ -274,6 +279,7 @@ augroup END
         iab #i #include <><Left><C-R>=Eatchar('\s')<CR>
         iab #I #include ""<Left><C-R>=Eatchar('\s')<CR>
         iab #d #define 
+        iab #p #pragma once
 
         iab .b .begin()<C-R>=Eatchar('\s')<CR>
         iab .e .end()<C-R>=Eatchar('\s')<CR>
@@ -303,10 +309,10 @@ augroup END
 
         " haskell useful extensions..
         
-        iab Leq {-# LANGUAGE ExistentialQuantification #-}
-        iab Lfi {-# LANGUAGE FlexibleInstances #-}
-        iab Lmp {-# LANGUAGE MultiParamTypeClasses #-}
-        iab Lvp {-# LANGUAGE ViewPatterns #-}
+        iab LEQ {-# LANGUAGE ExistentialQuantification #-}
+        iab LFI {-# LANGUAGE FlexibleInstances #-}
+        iab LMP {-# LANGUAGE MultiParamTypeClasses #-}
+        iab LVP {-# LANGUAGE ViewPatterns #-}
 
 "}
 
@@ -318,13 +324,13 @@ augroup END
         
         " C++ ass'instant: -> github.com/awgn/ass 
         
-        noremap <F1>    :AssGuard<CR>
         noremap <F2>    :AssGen<CR> 
+        noremap <F3>    :AssGuard<CR>
         
         " search for the next class\struct declaration..
         
-        noremap <F3>    :/\(\<class\>\\|\<struct\>\)\s*[a-zA-Z_][a-zA-Z0-9_]*.*\_s*{<CR> 
-        noremap <C-F3>  :?\(\<class\>\\|\<struct\>\)\s*[a-zA-Z_][a-zA-Z0-9_]*.*\_s*{<CR> 
+        noremap <F4>    :/\(\<class\>\\|\<struct\>\)\s*[a-zA-Z_][a-zA-Z0-9_]*.*\_s*{<CR> 
+        noremap <C-F4>  :?\(\<class\>\\|\<struct\>\)\s*[a-zA-Z_][a-zA-Z0-9_]*.*\_s*{<CR> 
 
         noremap <F5>    :UpdateTags<CR>
         noremap <F6>    :cnext<CR>
@@ -352,7 +358,6 @@ augroup END
         noremap <leader>S :%s/\<\>/<Left><Left><Left>
 
         noremap <leader>g :grep -r -w <C-R><C-W> 
-
         noremap <leader>p :CtrlP<CR>
 
         vmap Q gq
@@ -362,5 +367,10 @@ augroup END
         map <down>  <nop>
         map <left>  <nop>
         map <right> <nop>
+        
+        " D, delete a line or a visual block using non default register
+
+        nnoremap D "_dd
+        vnoremap D "_d
 "}
 
