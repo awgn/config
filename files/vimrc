@@ -33,6 +33,7 @@
         set cpoptions+=$
 
         set expandtab
+
         set foldlevel=0
         set autowrite
 
@@ -67,7 +68,9 @@
         set stl=%f\ %m\ %r\ Line:\ %l/%L[%p%%]\ Col:\ %c\ Buf:\ #%n\ [%b][0x%B]
 
         set laststatus=2
+        
         set updatetime=100
+        
         set clipboard=unnamed
         set viminfo='10,<10000,:100,%,s1000,n~/.viminfo
 
@@ -186,6 +189,7 @@ if has("autocmd")
         autocmd FileType cpp set shiftwidth=4 
         autocmd FileType cpp set tabstop=4 
         autocmd FileType cpp set iskeyword=a-z,A-Z,48-57,_,'
+        autocmd FileType cpp set cms=//%s
 
         autocmd FileType c cmap ;tf ?^{??(?,/^}/
         autocmd FileType c set cinoptions=:0,l1,t0,g0
@@ -193,7 +197,6 @@ if has("autocmd")
         autocmd FileType c set tabstop=8 
         autocmd FileType c set iskeyword=a-z,A-Z,48-57,_,'
         autocmd FileType c set formatoptions=tcqlron
-        autocmd FileType c set noexpandtab
 
         autocmd FileType ruby set shiftwidth=4 
         autocmd FileType ruby set tabstop=4 
@@ -275,7 +278,7 @@ augroup END
 
 " abbreviations {
 
-        iab intmain int<CR>main(int argc, char *argv[])<CR>{<CR>return 0;<CR>}<CR>
+        iab intmain int<CR>main(int argc, char *argv[])<CR>{<CR><CR>return 0;<CR>}<CR><UP><UP><RIGHT>
         iab #i #include <><Left><C-R>=Eatchar('\s')<CR>
         iab #I #include ""<Left><C-R>=Eatchar('\s')<CR>
         iab #d #define 
@@ -289,7 +292,7 @@ augroup END
         iab co std::cout<C-R>=Eatchar('\s')<CR>
         iab ce std::cerr<C-R>=Eatchar('\s')<CR>
         iab el std::endl<C-R>=Eatchar('\s')<CR>
-        
+
         iab dt decltype()<Left><C-R>=Eatchar('\s')<CR>
         iab tn typename
         iab td typedef
@@ -349,28 +352,50 @@ augroup END
         noremap <F12>   :TagbarToggle<CR>
 
         noremap <leader>c :set syntax=cpp<CR>
+        
+        " eliminate ugly \r 
+        
         noremap <leader>r :%s/\r//g<CR>
+        
+        " exact search
         
         noremap <leader>/ /\<\><Left><Left>
         noremap <leader>? ?\<\><Left><Left>
 
+        " replace the world under cursor...
+        
         noremap <leader>s :%s/\<<C-R><C-W>\>/
+        
+        " prepare exact replace
+        
         noremap <leader>S :%s/\<\>/<Left><Left><Left>
 
+        " find the string in non-comment lines (c/c++)
+        
+        noremap <leader>f :/\v((\/\*\|\/\/\|^\s*\*[^/]).*)@<!
+ 
         noremap <leader>g :grep -r -w <C-R><C-W> 
         noremap <leader>p :CtrlP<CR>
 
-        vmap Q gq
-        nmap Q gqap
-
+        " disable arrows
+        
         map <up>    <nop>
         map <down>  <nop>
         map <left>  <nop>
         map <right> <nop>
-        
-        " D, delete a line or a visual block using non default register
+       
+        " leader d -> delete the current line, leaving the default register
+        " untouched
 
-        nnoremap D "_dd
+        noremap <leader>d "_dd
+        
+        " D, delete a visual block using non default register
+        
         vnoremap D "_d
+
+        " expand,  %% in the relative directory of the current buffer
+        
+        cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
+        
 "}
 
