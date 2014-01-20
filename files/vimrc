@@ -5,9 +5,11 @@
 
 " general {
 
-        call pathogen#infect()
+        execute pathogen#infect()
         
         set nocompatible        	
+
+        set rtp+=/root/.vim/bundle/powerline/powerline/bindings/vim
 
         syntax enable
 
@@ -129,6 +131,7 @@
 
         let g:load_doxygen_syntax   = 1
 
+
         " tagbar
         
         let g:tagbar_width = 30
@@ -139,9 +142,16 @@
         let g:clang_complete_copen  = 1
         let g:clang_user_options    = '-std=c++11'
 
+        " you complete me
+        "
+        
+        let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+        let g:ycm_collect_identifiers_from_tags_files=1
+        let g:ycm_confirm_extra_conf = 0
+
         " my ctags options...
         
-        let g:my_ctags_options      = [ '--sort=foldcase', '--languages=C,C++', '--c++-kinds=+plx', '--fields=+iaS', '--extra=+q', '-I __attribute__+' ]
+        let g:my_ctags_options      = [ '--sort=foldcase', '--languages=C,C++', '--c++-kinds=+plx', '--fields=+liaS', '--extra=+q', '-I __attribute__+' ]
 
         " ctrl+p
         
@@ -153,8 +163,6 @@
         set encoding=utf-8
         let g:Powerline_symbols = 'fancy'
         
-        let g:haddock_browser="/usr/bin/w3m"
-
         runtime! ftplugin/man.vim
         runtime! ftplugin/gzip.vim
         runtime! ftplugin/taglist.vim 
@@ -167,6 +175,7 @@ if has("autocmd")
 
         autocmd BufNewFile,BufRead *.cpp set syntax=cpp
         autocmd BufNewFile,BufRead *.hsc set filetype=haskell
+
 
         " save time-consuming foldmethod=syntax while in insert mode... 
         
@@ -183,6 +192,10 @@ if has("autocmd")
         autocmd QuickFixCmdPost    l* nested lwindow
 
         autocmd FileType text setlocal textwidth=118
+        
+        " clear trailing white-spaces...
+        " 
+        autocmd FileType cpp,c,haskell,make autocmd BufWritePre <buffer> :%s/\s\+$//e
 
         autocmd FileType cpp cmap ;tf ?^{??(?,/^}/
         autocmd FileType cpp map <C-]> :exe "tj " . expand("<cword>") <CR>
@@ -199,13 +212,10 @@ if has("autocmd")
         autocmd FileType c set iskeyword=a-z,A-Z,48-57,_,'
         autocmd FileType c set formatoptions=tcqlron
 
-        autocmd FileType ruby set shiftwidth=4 
-        autocmd FileType ruby set tabstop=4 
-        autocmd FileType ruby set iskeyword=a-z,A-Z,48-57,_
-
         autocmd FileType haskell set shiftwidth=4 
         autocmd FileType haskell set tabstop=4 
         autocmd FileType haskell set iskeyword=a-z,A-Z,48-57,_,'
+        autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
 
         autocmd FileType make set noexpandtab
         autocmd FileType make set shiftwidth=8
@@ -287,7 +297,7 @@ augroup END
 
 " abbreviations {
 
-        iab intmain int<CR>main(int argc, char *argv[])<CR>{<CR><CR>return 0;<CR>}<CR><UP><UP><RIGHT>
+        iab intmain int<CR>main(int argc, char *argv[])<CR>{<CR>return 0;<CR>}<CR><UP><UP><RIGHT>
         iab #i #include <><Left><C-R>=Eatchar('\s')<CR>
         iab #I #include ""<Left><C-R>=Eatchar('\s')<CR>
         iab #d #define 
@@ -321,10 +331,14 @@ augroup END
 
         " haskell useful extensions..
         
+        iab LTH {-# LANGUAGE TemplateHaskell #-}
         iab LEQ {-# LANGUAGE ExistentialQuantification #-}
         iab LFI {-# LANGUAGE FlexibleInstances #-}
         iab LMP {-# LANGUAGE MultiParamTypeClasses #-}
         iab LVP {-# LANGUAGE ViewPatterns #-}
+        iab LTS {-# LANGUAGE TupleSections #-}
+        iab LBP {-# LANGUAGE BangPatterns #-}
+        iab LOS {-# LANGUAGE OverloadedStrings #- }
 
 "}
 
@@ -346,7 +360,6 @@ augroup END
 
         noremap <F5>    :UpdateTags<CR>
         noremap <F6>    :cnext<CR>
-        noremap <S-F6>  :cprev<CR>
 
         noremap <F7>    :make<CR>
         noremap <F8>    :QFix<CR>
@@ -365,6 +378,12 @@ augroup END
         " eliminate ugly \r 
         
         noremap <leader>r :%s/\r//g<CR>
+
+        " ghc-mod
+        "
+       
+        noremap <leader>t :GhcModType<CR>
+        
         
         " search and stuff..
         
@@ -409,6 +428,10 @@ augroup END
         " expand,  %% in the relative directory of the current buffer
         
         cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
+ 
+        " hex editor...
         
+        map <Leader>hon  :%!xxd<CR>
+        map <Leader>hoff :%!xxd -r<CR>       
 "}
 
