@@ -162,7 +162,11 @@
         
         set encoding=utf-8
         let g:Powerline_symbols = 'fancy'
+       
+        " ghc-mod
         
+        let g:ghcmod_ghc_options = ['-cpp']
+
         runtime! ftplugin/man.vim
         runtime! ftplugin/gzip.vim
         runtime! ftplugin/taglist.vim 
@@ -339,6 +343,7 @@ augroup END
         iab LTS {-# LANGUAGE TupleSections #-}
         iab LBP {-# LANGUAGE BangPatterns #-}
         iab LOS {-# LANGUAGE OverloadedStrings #- }
+        iab LMH {-# LANGUAGE MagiHash #- }
 
 "}
 
@@ -350,49 +355,44 @@ augroup END
         
         " C++ ass'instant: -> github.com/awgn/ass 
         
-        noremap <F2>    :AssGen<CR> 
+        noremap <F2>    :AssGen<CR>
         noremap <F3>    :AssGuard<CR>
+        noremap <F11>   :AssClangRun <CR>
+        noremap <S-F11> :AssGccRun <CR>
+        noremap <S-F10> :AssIncludeThis<CR>
         
-        " search for the next class\struct declaration..
-        
-        noremap <F4>    :/\(\<class\>\\|\<struct\>\)\s*[a-zA-Z_][a-zA-Z0-9_]*.*\_s*{<CR> 
-        noremap <C-F4>  :?\(\<class\>\\|\<struct\>\)\s*[a-zA-Z_][a-zA-Z0-9_]*.*\_s*{<CR> 
-
         noremap <F5>    :UpdateTags<CR>
         noremap <F6>    :cnext<CR>
 
         noremap <F7>    :make<CR>
         noremap <F8>    :QFix<CR>
         noremap <F9>    :NERDTreeToggle<CR>
-        
         noremap <F10>   :Bufferlist<CR>
-        noremap <S-F10> :AssIncludeThis<CR>
-
-        noremap <F11>   :AssClangRun <CR>
-        noremap <S-F11> :AssGccRun <CR>
-
         noremap <F12>   :TagbarToggle<CR>
 
+        " leaders...
+        "
+        
         noremap <leader>c :set syntax=cpp<CR>
+        
+        " search and stuff
+        
+        noremap / /\v
+        noremap ? ?\v
+        
+        noremap <leader>/ /\<\><Left><Left>
+        noremap <leader>? ?\<\><Left><Left>
+        noremap <leader>c :/\(\<class\>\\|\<struct\>\)\s*[a-zA-Z_][a-zA-Z0-9_]*.*\_s*{<CR> 
         
         " eliminate ugly \r 
         
         noremap <leader>r :%s/\r//g<CR>
 
         " ghc-mod
-        "
-       
+        
         noremap <leader>t :GhcModType<CR>
-        
-        
-        " search and stuff..
-        
-        noremap / /\v
-        noremap ? ?\v
-
-        noremap <leader>/ /\<\><Left><Left>
-        noremap <leader>? ?\<\><Left><Left>
-
+        noremap <leader>T :GhcModTypeClear<CR>
+       
         " replace the world under cursor...
         
         noremap <leader>s :%s/\<<C-R><C-W>\>/
@@ -401,13 +401,13 @@ augroup END
         
         noremap <leader>S :%s/\<\>/<Left><Left><Left>
 
-        " find the string in non-comment lines (c/c++)
+        " find the string in non-comment lines (C/C++)
         
         noremap <leader>f :/\v((\/\*\|\/\/\|^\s*\*[^/]).*)@<!
  
         noremap <leader>g :grep -r -w <C-R><C-W> 
 
-        noremap <leader>p :CtrlP<CR>
+        noremap <leader>u :Unite buffer file_rec<CR>
 
         " disable arrows
         
