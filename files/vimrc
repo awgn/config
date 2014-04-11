@@ -3,19 +3,20 @@
 " my dot.vimrc config (don't try this at home!) Nicola
 "
 
+
 " general {
 
         execute pathogen#infect()
         
-        set nocompatible        	
-
-        set rtp+=/root/.vim/bundle/powerline/powerline/bindings/vim
-
         syntax enable
 
         filetype on
         filetype plugin on
         filetype indent on
+       
+        set nocompatible        	
+
+        set rtp+=/root/.vim/bundle/powerline/powerline/bindings/vim
 
         set backspace=indent,eol,start 
         
@@ -85,7 +86,7 @@
         " set infercase
 
         set path+=/usr/include
-        set path+=/usr/include/c++/4.7
+        set path+=/usr/include/c++/4.8
 
         " default tab and stuff
         "
@@ -103,23 +104,15 @@
         if has("gui_running")
                 set guifont=Terminus\ 10
                 " colorscheme github
-                " colorscheme mustang
-                " set background=dark
-                " colorscheme solarized
-                " colorscheme jellybeans
                 colorscheme default
         else
                 " colorscheme github
-                " colorscheme mustang
-                " colorscheme solarized
-                " colorscheme gummybears
-                " colorscheme jellybeans
                 colorscheme default
         endif
 
         set diffopt=filler,iwhite,context:10
 "}
-
+  
 
 " plugin config {
         
@@ -142,8 +135,7 @@
         let g:clang_complete_copen  = 1
         let g:clang_user_options    = '-std=c++11'
 
-        " you complete me
-        "
+        " you complete me...
         
         let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
         let g:ycm_collect_identifiers_from_tags_files=1
@@ -151,7 +143,7 @@
 
         " my ctags options...
         
-        let g:my_ctags_options      = [ '--sort=foldcase', '--languages=C,C++', '--c++-kinds=+plx', '--fields=+liaS', '--extra=+q', '-I __attribute__+' ]
+        let g:my_ctags_options = [ '--sort=foldcase', '--languages=C,C++', '--c++-kinds=+plx', '--fields=+liaS', '--extra=+q', '-I __attribute__+' ]
 
         " ctrl+p
         
@@ -165,11 +157,15 @@
        
         " ghc-mod
         
-        let g:ghcmod_ghc_options = ['-cpp']
+        let g:ghcmod_ghc_options = ['-Wall -cpp']
 
         runtime! ftplugin/man.vim
         runtime! ftplugin/gzip.vim
         runtime! ftplugin/taglist.vim 
+
+        " devtools...
+        
+        let g:hdevtools_options = '-g-isrc -g-Wall -g-cpp'
 "}
 
 
@@ -177,9 +173,10 @@
 
 if has("autocmd")
 
+        let g:c_syntax_for_h = 1
+
         autocmd BufNewFile,BufRead *.cpp set syntax=cpp
         autocmd BufNewFile,BufRead *.hsc set filetype=haskell
-
 
         " save time-consuming foldmethod=syntax while in insert mode... 
         
@@ -294,13 +291,17 @@ augroup END
  
     command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=hide noswapfile | R !<args>
     command! -bang -nargs=? QFix call QFixToggle(<bang>0)
-    command! UpdateTags call UpdateCppTags()
     command! -nargs=0 -bar Qargs execute 'args' QuickFixFilenames()
-
+    command! UpdateTags call UpdateCppTags()
 " }
 
-" abbreviations {
 
+" language_options {
+
+function CppLangOptions()
+
+        " abbreviations...
+        "
         iab intmain int<CR>main(int argc, char *argv[])<CR>{<CR>return 0;<CR>}<CR><UP><UP><RIGHT>
         iab #i #include <><Left><C-R>=Eatchar('\s')<CR>
         iab #I #include ""<Left><C-R>=Eatchar('\s')<CR>
@@ -321,38 +322,12 @@ augroup END
         iab td typedef
         iab tp template <><Left><C-R>=Eatchar('\s')<CR>
 
-        iab svec std::vector<><Left><C-R>=Eatchar('\s')<CR>
-        iab smap std::map<><Left><C-R>=Eatchar('\s')<CR>
-        iab sstr std::string<C-R>=Eatchar('\s')<CR>
-
-        iab tre throw std::runtime_error("")<Left><Left><C-R>=Eatchar('\s')<CR>
-
         iab .\ []() {}<Left><Left><Left><Left><Left><Left><C-R>=Eatchar('\s')<CR>
 
         iab __P __PRETTY_FUNCTION__
         iab __F __FUNCTION__
         iab __G __GXX_EXPERIMENTAL_CXX0X__
 
-        " haskell useful extensions..
-        
-        iab LTH {-# LANGUAGE TemplateHaskell #-}
-        iab LEQ {-# LANGUAGE ExistentialQuantification #-}
-        iab LFI {-# LANGUAGE FlexibleInstances #-}
-        iab LMP {-# LANGUAGE MultiParamTypeClasses #-}
-        iab LVP {-# LANGUAGE ViewPatterns #-}
-        iab LTS {-# LANGUAGE TupleSections #-}
-        iab LBP {-# LANGUAGE BangPatterns #-}
-        iab LOS {-# LANGUAGE OverloadedStrings #- }
-        iab LMH {-# LANGUAGE MagiHash #- }
-
-"}
-
-" mapping {
-        
-        " set mapleader
-        
-        let mapleader = ","
-        
         " C++ ass'instant: -> github.com/awgn/ass 
         
         noremap <F2>    :AssGen<CR>
@@ -361,13 +336,57 @@ augroup END
         noremap <S-F11> :AssGccRun <CR>
         noremap <S-F10> :AssIncludeThis<CR>
         
+        " find the string in non-comment lines (C/C++)
+        
+        noremap <leader>f :/\v((\/\*\|\/\/\|^\s*\*[^/]).*)@<!
+ 
+endfunction
+
+function HaskellLangOptions()
+        
+        " abbreviations...
+        "
+        
+        iab LTH {-# LANGUAGE TemplateHaskell #-}
+        iab LEQ {-# LANGUAGE ExistentialQuantification #-}
+        iab LFI {-# LANGUAGE FlexibleInstances #-}
+        iab LMP {-# LANGUAGE MultiParamTypeClasses #-}
+        iab LVP {-# LANGUAGE ViewPatterns #-}
+        iab LTS {-# LANGUAGE TupleSections #-}
+        iab LBP {-# LANGUAGE BangPatterns #-}
+        iab LOS {-# LANGUAGE OverloadedStrings #-}
+        iab LMH {-# LANGUAGE MagiHash #-}
+        iab LGA {-# LANGUAGE GADTs #-}
+
+        " ghc-mod
+        
+        noremap <leader>t :GhcModType<CR>
+        noremap <leader><leader>t :GhcModTypeClear<CR>
+
+        " hdevtools...
+       "
+        nnoremap <buffer> <F1> :HdevtoolsType<CR>
+        nnoremap <buffer> <silent> <F2> :HdevtoolsClear<CR>
+
+endfunction
+
+" }
+
+" mapping {
+        
+        " set mapleader
+        
+        let mapleader = ","
+        
+        " general keys...
+        "
         noremap <F5>    :UpdateTags<CR>
         noremap <F6>    :cnext<CR>
 
-        noremap <F7>    :make<CR>
+        noremap <F7>    :Make<CR>
         noremap <F8>    :QFix<CR>
         noremap <F9>    :NERDTreeToggle<CR>
-        noremap <F10>   :Bufferlist<CR>
+        noremap <F10>   :GundoToggle<CR>
         noremap <F12>   :TagbarToggle<CR>
 
         " leaders...
@@ -388,11 +407,6 @@ augroup END
         
         noremap <leader>r :%s/\r//g<CR>
 
-        " ghc-mod
-        
-        noremap <leader>t :GhcModType<CR>
-        noremap <leader>T :GhcModTypeClear<CR>
-       
         " replace the world under cursor...
         
         noremap <leader>s :%s/\<<C-R><C-W>\>/
@@ -401,10 +415,6 @@ augroup END
         
         noremap <leader>S :%s/\<\>/<Left><Left><Left>
 
-        " find the string in non-comment lines (C/C++)
-        
-        noremap <leader>f :/\v((\/\*\|\/\/\|^\s*\*[^/]).*)@<!
- 
         noremap <leader>g :grep -r -w <C-R><C-W> 
 
         noremap <leader>u :Unite buffer file_rec<CR>
@@ -434,4 +444,9 @@ augroup END
         map <Leader>hon  :%!xxd<CR>
         map <Leader>hoff :%!xxd -r<CR>       
 "}
+
+
+autocmd FileType c       call CppLangOptions()
+autocmd FileType cpp     call CppLangOptions()
+autocmd FileType haskell call HaskellLangOptions()
 
