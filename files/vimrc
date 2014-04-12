@@ -57,9 +57,9 @@
 
         set ruler
         set magic
-        set mps+=<:> " this is great for C++ template metaprogramming
+        set mps+=<:> " this is great for C++ template meta-programming
         
-        set wildignore+=*/.git/*,*/.hg/*,*/.svn/*        " Linux/MacOSX
+        set wildignore+=*/.git/*,*/.hg/*,*/.svn/* " Linux/MacOSX
         set wildignore+=*.o,*.so,*.ko,*.bak
         
         set nowrap
@@ -198,26 +198,6 @@ if has("autocmd")
         " 
         autocmd FileType cpp,c,haskell,make autocmd BufWritePre <buffer> :%s/\s\+$//e
 
-        autocmd FileType cpp cmap ;tf ?^{??(?,/^}/
-        autocmd FileType cpp map <C-]> :exe "tj " . expand("<cword>") <CR>
-        autocmd FileType cpp set cinoptions={0}0:0=4l1g0p0t0i0+0(0u2W4
-        autocmd FileType cpp set shiftwidth=4 
-        autocmd FileType cpp set tabstop=4 
-        autocmd FileType cpp set iskeyword=a-z,A-Z,48-57,_,'
-        autocmd FileType cpp set cms=//%s
-
-        autocmd FileType c cmap ;tf ?^{??(?,/^}/
-        autocmd FileType c set cinoptions=:0,l1,t0,g0
-        autocmd FileType c set shiftwidth=8 
-        autocmd FileType c set tabstop=8 
-        autocmd FileType c set iskeyword=a-z,A-Z,48-57,_,'
-        autocmd FileType c set formatoptions=tcqlron
-
-        autocmd FileType haskell set shiftwidth=4 
-        autocmd FileType haskell set tabstop=4 
-        autocmd FileType haskell set iskeyword=a-z,A-Z,48-57,_,'
-        autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
-
         autocmd FileType make set noexpandtab
         autocmd FileType make set shiftwidth=8
 
@@ -298,7 +278,38 @@ augroup END
 
 " language_options {
 
+function CLangOptions()
+        
+        cmap ;tf ?^{??(?,/^}/
+
+        setlocal cinoptions=:0,l1,t0,g0
+        setlocal shiftwidth=8 
+        setlocal tabstop=8 
+        setlocal iskeyword=a-z,A-Z,48-57,_,'
+        setlocal formatoptions=tcqlron
+        setlocal noexpandtab
+        
+        syn keyword cOperator  likely unlikely 
+        syn keyword cType u8 u16 u32 u64 s8 s16 s32 s64
+
+        iab __P __PRETTY_FUNCTION__
+        iab __F __FUNCTION__
+        iab __G __GXX_EXPERIMENTAL_CXX0X__
+
+        noremap <F3>    :AssGuard<CR>
+        
+endfunction
+
 function CppLangOptions()
+        
+        cmap ;tf ?^{??(?,/^}/
+        map <C-]> :exe "tj " . expand("<cword>") <CR>
+
+        setlocal cinoptions={0}0:0=4l1g0p0t0i0+0(0u2W4
+        setlocal shiftwidth=4 
+        setlocal tabstop=4 
+        setlocal iskeyword=a-z,A-Z,48-57,_,'
+        setlocal cms=//%s
 
         " abbreviations...
         "
@@ -343,6 +354,11 @@ function CppLangOptions()
 endfunction
 
 function HaskellLangOptions()
+        
+        setlocal shiftwidth=4 
+        setlocal tabstop=4 
+        setlocal iskeyword=a-z,A-Z,48-57,_,'
+        setlocal omnifunc=necoghc#omnifunc
         
         " abbreviations...
         "
@@ -446,7 +462,7 @@ endfunction
 "}
 
 
-autocmd FileType c       call CppLangOptions()
+autocmd FileType c       call CLangOptions()
 autocmd FileType cpp     call CppLangOptions()
 autocmd FileType haskell call HaskellLangOptions()
 
