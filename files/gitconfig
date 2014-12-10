@@ -1,0 +1,66 @@
+[core]
+	quotepath = false
+[user]
+	name = Nicola Bonelli
+	email = nicola.bonelli@gmail.com
+[color]
+    diff = auto
+	ui = always
+	status = auto
+	branch = auto
+
+[alias]
+
+    l   = log --graph --pretty=format':%C(yellow)%h%Cblue%d%Creset %s %C(white) %an, %ai%Creset'
+    lg  = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative
+    lol = log --pretty=oneline --abbrev-commit --graph --decorate
+
+    wdiff = diff --no-ext-diff --word-diff=color
+    tdiff = diff --no-ext-diff
+
+    co = checkout
+    g = grep --break --heading --line-number
+
+    unstage = reset HEAD
+    uncommit = reset --soft HEAD^
+    staged = diff --cached
+    unstaged = diff
+    current-branch = !git symbolic-ref -q HEAD | sed -e 's|^refs/heads/||'
+
+    track = checkout -t
+    untrack = rm --cached
+    unchanged = update-index --assume-unchanged
+    conflog = log --merge --left-right -p
+
+[help]
+    autocorrect = 1
+
+[status]
+    submodule = 1
+
+[push]
+	default = upstream
+
+[grep]
+	extendRegexp = true
+    lineNumber = true
+
+[diff]
+    tool = meld
+
+[merge]
+	tool = meldtool
+    
+[difftool]
+	prompt = false
+
+[mergetool]
+	keepBackup = false
+	prompt = false
+    
+[color "branch"]
+    upstream = true
+
+[branch]
+    autosetuprebase = always
+
