@@ -1,8 +1,11 @@
 [core]
 	quotepath = false
+	excludesfile = /root/.gitignore_global
+
 [user]
 	name = Nicola Bonelli
 	email = nicola.bonelli@gmail.com
+
 [color]
     diff = auto
 	ui = always
@@ -58,9 +61,6 @@
 	keepBackup = false
 	prompt = false
     
-[color "branch"]
-    upstream = true
-
 [branch]
     autosetuprebase = always
 
