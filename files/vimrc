@@ -3,10 +3,50 @@
 " my dot.vimrc config (don't try this at home!) Nicola
 "
 
+" vundle  {
+
+    set nocompatible              " be iMproved, required
+    filetype off                  " required
+
+    " set the runtime path to include Vundle and initialize
+    
+    set rtp+=~/.vim/bundle/Vundle.vim
+    call vundle#begin()
+
+    Plugin 'gmarik/Vundle.vim'
+
+    Plugin 'Cpp11-Syntax-Support'
+
+    Plugin 'tpope/vim-fugitive'
+    Plugin 'tpope/vim-abolish'
+    Plugin 'tpope/vim-commentary'
+    Plugin 'tpope/vim-dispatch'
+    Plugin 'tpope/vim-surround'
+
+    Plugin 'bitc/vim-hdevtools'
+
+    Plugin 'sjl/gundo.vim'
+    Plugin 'scrooloose/syntastic'
+    Plugin 'majutsushi/tagbar'
+    Plugin 'Shougo/vimproc.vim'
+
+    Plugin 'vim-airline'
+    Plugin 'vim-multiple-cursors'
+    
+    Plugin 'neco-ghc'
+    Plugin 'unite.vim'
+    Plugin 'visual-increment'
+    Plugin 'YankRing.vim'
+
+    " All of your Plugins must be added before the following line
+    
+    call vundle#end()            " required
+
+" }
 
 " general {
 
-        execute pathogen#infect()
+        " execute pathogen#infect()
         
         syntax enable
 
@@ -16,12 +56,14 @@
        
         set nocompatible        	
 
-        set rtp+=/root/.vim/bundle/powerline/powerline/bindings/vim
+        set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
 
         set backspace=indent,eol,start 
         
         set completeopt=menu,longest
         set complete=.,w,b,t,i
+
+        set term=xterm-256color
         
         set shortmess+=at
  
@@ -86,7 +128,7 @@
         " set infercase
 
         set path+=/usr/include
-        set path+=/usr/include/c++/4.8
+        set path+=/usr/include/c++/4.9
 
         " default tab and stuff
         "
@@ -97,9 +139,11 @@
         set smartindent 
         set smarttab
 
-        set t_Co=256
+        " set t_Co=256
 
         set timeoutlen=1000 ttimeoutlen=50
+
+        let g:airline_theme='molokai'
 
         if has("gui_running")
                 set guifont=Terminus\ 10
@@ -118,7 +162,7 @@
         
         " this to avoid spurious highlight with c++11 lambdas 
         
-        let c_no_curly_error=1
+        let c_no_curly_error = 1
 
         let Tlist_Use_Right_Window  = 1
 
@@ -163,9 +207,12 @@
         runtime! ftplugin/gzip.vim
         runtime! ftplugin/taglist.vim 
 
-        " devtools...
+        " syntastic: c++11/Haskell
         
-        let g:hdevtools_options = '-g-isrc -g-Wall -g-cpp'
+        let g:syntastic_cpp_compiler = 'clang++'
+        let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++'
+        let g:syntastic_haskell_hdevtools_args = '-g-isrc -g-Wall -g-cpp'
+
 "}
 
 
@@ -175,7 +222,10 @@ if has("autocmd")
 
         let g:c_syntax_for_h = 1
 
-        autocmd BufNewFile,BufRead *.cpp set syntax=cpp
+        autocmd BufNewFile,BufRead *.c   set filetype=c   syntax=c
+        autocmd BufNewFile,BufRead *.h   set filetype=cpp syntax=cpp
+        autocmd BufNewFile,BufRead *.cpp set filetype=cpp syntax=cpp 
+        autocmd BufNewFile,BufRead *.hpp set filetype=cpp syntax=cpp 
         autocmd BufNewFile,BufRead *.hsc set filetype=haskell
 
         " save time-consuming foldmethod=syntax while in insert mode... 
@@ -248,6 +298,7 @@ function! QFixToggle(forced)
   endif
 endfunction
 
+
 function! QuickFixFilenames()
     let buffer_numbers = {}
     for item in getqflist()
@@ -282,7 +333,7 @@ function CLangOptions()
         
         cmap ;tf ?^{??(?,/^}/
 
-        setlocal cinoptions=:0,l1,t0,g0
+        setlocal cinoptions=:0,l1,t0,g0,j1,(0,ws,Ws
         setlocal shiftwidth=8 
         setlocal tabstop=8 
         setlocal iskeyword=a-z,A-Z,48-57,_,'
@@ -292,11 +343,37 @@ function CLangOptions()
         syn keyword cOperator  likely unlikely 
         syn keyword cType u8 u16 u32 u64 s8 s16 s32 s64
 
+        iab intmain int<CR>main(int argc, char *argv[])<CR>{<CR>return 0;<CR>}<CR><UP><UP><RIGHT>
+        iab #i #include <><Left><C-R>=Eatchar('\s')<CR>
+        iab #I #include ""<Left><C-R>=Eatchar('\s')<CR>
+        iab #d #define 
+        iab #p #pragma once
+
+        iab .b .begin()<C-R>=Eatchar('\s')<CR>
+        iab .e .end()<C-R>=Eatchar('\s')<CR>
+        iab ->b ->begin()<C-R>=Eatchar('\s')<CR>
+        iab ->e ->end()<C-R>=Eatchar('\s')<CR>
+
+        iab co std::cout<C-R>=Eatchar('\s')<CR>
+        iab ce std::cerr<C-R>=Eatchar('\s')<CR>
+        iab el std::endl<C-R>=Eatchar('\s')<CR>
+
+        iab dt decltype()<Left><C-R>=Eatchar('\s')<CR>
+        iab tn typename
+        iab td typedef
+        iab tp template <><Left><C-R>=Eatchar('\s')<CR>
+
+        iab .\ []() {}<Left><Left><Left><Left><Left><Left><C-R>=Eatchar('\s')<CR>
+
         iab __P __PRETTY_FUNCTION__
         iab __F __FUNCTION__
         iab __G __GXX_EXPERIMENTAL_CXX0X__
 
+        noremap <F2>    :AssGen<CR>
         noremap <F3>    :AssGuard<CR>
+        noremap <F11>   :AssClangRun <CR>
+        noremap <S-F11> :AssGccRun <CR>
+        noremap <S-F10> :AssIncludeThis<CR>
         
 endfunction
 
@@ -360,19 +437,21 @@ function HaskellLangOptions()
         setlocal iskeyword=a-z,A-Z,48-57,_,'
         setlocal omnifunc=necoghc#omnifunc
         
+        set makeprg=cabal
+
         " abbreviations...
         "
         
-        iab LTH {-# LANGUAGE TemplateHaskell #-}
-        iab LEQ {-# LANGUAGE ExistentialQuantification #-}
-        iab LFI {-# LANGUAGE FlexibleInstances #-}
-        iab LMP {-# LANGUAGE MultiParamTypeClasses #-}
-        iab LVP {-# LANGUAGE ViewPatterns #-}
-        iab LTS {-# LANGUAGE TupleSections #-}
-        iab LBP {-# LANGUAGE BangPatterns #-}
-        iab LOS {-# LANGUAGE OverloadedStrings #-}
-        iab LMH {-# LANGUAGE MagiHash #-}
-        iab LGA {-# LANGUAGE GADTs #-}
+        iab HTH {-# LANGUAGE TemplateHaskell #-}
+        iab HEQ {-# LANGUAGE ExistentialQuantification #-}
+        iab HFI {-# LANGUAGE FlexibleInstances #-}
+        iab HMP {-# LANGUAGE MultiParamTypeClasses #-}
+        iab HVP {-# LANGUAGE ViewPatterns #-}
+        iab HTS {-# LANGUAGE TupleSections #-}
+        iab HBP {-# LANGUAGE BangPatterns #-}
+        iab HOS {-# LANGUAGE OverloadedStrings #-}
+        iab HMH {-# LANGUAGE MagiHash #-}
+        iab HGA {-# LANGUAGE GADTs #-}
 
         " ghc-mod
         
@@ -380,9 +459,11 @@ function HaskellLangOptions()
         noremap <leader><leader>t :GhcModTypeClear<CR>
 
         " hdevtools...
-       "
+        "
         nnoremap <buffer> <F1> :HdevtoolsType<CR>
         nnoremap <buffer> <silent> <F2> :HdevtoolsClear<CR>
+ 
+        let g:hdevtools_options = '-g-isrc -g-Wall -g-cpp'
 
 endfunction
 
@@ -408,7 +489,7 @@ endfunction
         " leaders...
         "
         
-        noremap <leader>c :set syntax=cpp<CR>
+        noremap <leader>p :set syntax=cpp<CR>
         
         " search and stuff
         
@@ -427,11 +508,14 @@ endfunction
         
         noremap <leader>s :%s/\<<C-R><C-W>\>/
         
+        " search the word under cursor...
+       
+        noremap <leader>g :grep -r -w <C-R><C-W> 
+        
+        
         " prepare exact replace
         
         noremap <leader>S :%s/\<\>/<Left><Left><Left>
-
-        noremap <leader>g :grep -r -w <C-R><C-W> 
 
         noremap <leader>u :Unite buffer file_rec<CR>
 
@@ -441,7 +525,11 @@ endfunction
         map <down>  <nop>
         map <left>  <nop>
         map <right> <nop>
+
+        " disable annoying lowercase in visual mode.
        
+        xmap u <nop>
+
         " leader d -> delete the current line, leaving the default register
         " untouched
 
