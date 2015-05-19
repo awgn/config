@@ -25,6 +25,7 @@
 
     Plugin 'bitc/vim-hdevtools'
 
+    Plugin 'kien/ctrlp.vim'
     Plugin 'sjl/gundo.vim'
     Plugin 'scrooloose/syntastic'
     Plugin 'majutsushi/tagbar'
@@ -34,7 +35,6 @@
     Plugin 'vim-multiple-cursors'
     
     Plugin 'neco-ghc'
-    Plugin 'unite.vim'
     Plugin 'visual-increment'
     Plugin 'YankRing.vim'
 
@@ -489,7 +489,7 @@ endfunction
         " leaders...
         "
         
-        noremap <leader>p :set syntax=cpp<CR>
+        noremap <leader>p :CtrlP<CR>
         
         " search and stuff
         
@@ -516,8 +516,6 @@ endfunction
         " prepare exact replace
         
         noremap <leader>S :%s/\<\>/<Left><Left><Left>
-
-        noremap <leader>u :Unite buffer file_rec<CR>
 
         " disable arrows
         
