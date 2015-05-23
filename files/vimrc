@@ -222,10 +222,10 @@ if has("autocmd")
 
         let g:c_syntax_for_h = 1
 
-        autocmd BufNewFile,BufRead *.c   set filetype=c   syntax=c
-        autocmd BufNewFile,BufRead *.h   set filetype=cpp syntax=cpp
-        autocmd BufNewFile,BufRead *.cpp set filetype=cpp syntax=cpp 
-        autocmd BufNewFile,BufRead *.hpp set filetype=cpp syntax=cpp 
+        autocmd BufNewFile,BufRead *.c   set filetype=c   
+        autocmd BufNewFile,BufRead *.h   set filetype=c   
+        autocmd BufNewFile,BufRead *.cpp set filetype=cpp  
+        autocmd BufNewFile,BufRead *.hpp set filetype=cpp  
         autocmd BufNewFile,BufRead *.hsc set filetype=haskell
 
         " save time-consuming foldmethod=syntax while in insert mode... 
@@ -236,7 +236,6 @@ if has("autocmd")
         " disable syntax on very huge files...
         
         autocmd BufReadPre *  if getfsize(expand('<afile>')) > 1000000 | syntax off | endif
-
         autocmd BufEnter * set tags=~/.vim/system-tags,./tags,../tags,tags,TAGS
 
         autocmd QuickFixCmdPost [^l]* nested cwindow
@@ -250,8 +249,12 @@ if has("autocmd")
 
         autocmd FileType make set noexpandtab
         autocmd FileType make set shiftwidth=8
-
+        
         autocmd BufWinEnter * call ResCur()
+
+        autocmd FileType haskell call FormatHaskell()
+        autocmd FileType cpp     call FormatCpp()
+        autocmd FileType c       call FormatKernel()
 endif
 
 " }
@@ -329,41 +332,37 @@ augroup END
 
 " language_options {
 
-function CLangOptions()
-        
+function FormatKernel()
+
+        setlocal tabstop=8
+        setlocal shiftwidth=8
+        setlocal softtabstop=8
+        setlocal textwidth=80
+        setlocal noexpandtab
+
+        setlocal cindent
+        setlocal formatoptions=tcqlron
+        setlocal cinoptions=:0,l1,t0,g0,(0
+
         cmap ;tf ?^{??(?,/^}/
 
-        setlocal cinoptions=:0,l1,t0,g0,j1,(0,ws,Ws
-        setlocal shiftwidth=8 
-        setlocal tabstop=8 
         setlocal iskeyword=a-z,A-Z,48-57,_,'
-        setlocal formatoptions=tcqlron
         setlocal noexpandtab
         
         syn keyword cOperator  likely unlikely 
         syn keyword cType u8 u16 u32 u64 s8 s16 s32 s64
+
+        highlight default link LinuxError ErrorMsg
+
+        syn match LinuxError / \+\ze\t/     " spaces before tab
+        syn match LinuxError /\s\+$/        " trailing whitespaces
+        syn match LinuxError /\%121v.\+/    " virtual column 121 and more
 
         iab intmain int<CR>main(int argc, char *argv[])<CR>{<CR>return 0;<CR>}<CR><UP><UP><RIGHT>
         iab #i #include <><Left><C-R>=Eatchar('\s')<CR>
         iab #I #include ""<Left><C-R>=Eatchar('\s')<CR>
         iab #d #define 
         iab #p #pragma once
-
-        iab .b .begin()<C-R>=Eatchar('\s')<CR>
-        iab .e .end()<C-R>=Eatchar('\s')<CR>
-        iab ->b ->begin()<C-R>=Eatchar('\s')<CR>
-        iab ->e ->end()<C-R>=Eatchar('\s')<CR>
-
-        iab co std::cout<C-R>=Eatchar('\s')<CR>
-        iab ce std::cerr<C-R>=Eatchar('\s')<CR>
-        iab el std::endl<C-R>=Eatchar('\s')<CR>
-
-        iab dt decltype()<Left><C-R>=Eatchar('\s')<CR>
-        iab tn typename
-        iab td typedef
-        iab tp template <><Left><C-R>=Eatchar('\s')<CR>
-
-        iab .\ []() {}<Left><Left><Left><Left><Left><Left><C-R>=Eatchar('\s')<CR>
 
         iab __P __PRETTY_FUNCTION__
         iab __F __FUNCTION__
@@ -377,7 +376,7 @@ function CLangOptions()
         
 endfunction
 
-function CppLangOptions()
+function FormatCpp()
         
         cmap ;tf ?^{??(?,/^}/
         map <C-]> :exe "tj " . expand("<cword>") <CR>
@@ -430,7 +429,7 @@ function CppLangOptions()
  
 endfunction
 
-function HaskellLangOptions()
+function FormatHaskell()
         
         setlocal shiftwidth=4 
         setlocal tabstop=4 
@@ -546,9 +545,4 @@ endfunction
         map <Leader>hon  :%!xxd<CR>
         map <Leader>hoff :%!xxd -r<CR>       
 "}
-
-
-autocmd FileType c       call CLangOptions()
-autocmd FileType cpp     call CppLangOptions()
-autocmd FileType haskell call HaskellLangOptions()
 
