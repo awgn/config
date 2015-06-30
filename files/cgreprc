@@ -1,6 +1,14 @@
+#
+# config file...
+# 
 
---file-type c --file-type C --file-type cpp --file-type CPP --file-type cxx --file-type cc --file-type cp 
---file-type h --file-type H --file-type hpp --file-type HPP --file-type hxx --file-type hh --file-type hp   
+Config 
+{
+    configLanguages = [ Awk, C, Cpp, Cabal, Csharp, Chapel, Coffee, Conf, Css, CMake, D, Erlang, Fsharp, Go, 
+                        Haskell, Html, Java, Javascript, Latex, Lua, Make, OCaml, ObjectiveC , Perl, PHP , 
+                        Python, Ruby, Scala, Tcl, Text, Shell, Verilog, VHDL, Vim ],
+    configPruneDirs = [".svn", ".git", "CMakeFiles" ],
+    configAutoColor = True
+} 
 
---prune-dir svn --prune-dir .git --prune-dir CMakeFiles
 
