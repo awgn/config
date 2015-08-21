@@ -17,7 +17,6 @@
 
     Plugin 'Cpp11-Syntax-Support'
     Plugin 'YankRing.vim'
-    Plugin 'neco-ghc'
 
     Plugin 'tpope/vim-fugitive'
     Plugin 'tpope/vim-abolish'
@@ -26,14 +25,18 @@
     Plugin 'tpope/vim-surround'
 
     Plugin 'triglav/vim-visual-increment'
-    Plugin 'bitc/vim-hdevtools'
     Plugin 'bling/vim-airline'
     Plugin 'kien/ctrlp.vim'
     Plugin 'sjl/gundo.vim'
     Plugin 'scrooloose/syntastic'
     Plugin 'majutsushi/tagbar'
     Plugin 'Shougo/vimproc.vim'
+    Plugin 'eagletmt/neco-ghc'
+    Plugin 'nathanaelkane/vim-indent-guides'
 
+    Plugin 'bitc/vim-hdevtools'
+
+    Plugin 'bkad/CamelCaseMotion.git'
 
     " All of your Plugins must be added before the following line
     
@@ -60,7 +63,7 @@
         set completeopt=menu,longest
         set complete=.,w,b,t,i
 
-        set term=xterm-256color
+        set term=screen-256color
         
         set shortmess+=at
  
@@ -166,45 +169,41 @@
         let g:load_doxygen_syntax   = 1
 
 
-        " tagbar
+        """ tagbar
         
         let g:tagbar_width = 30
         
-        " clang completion...
+        """ clang completion...
         
         let g:clang_complete_auto   = 0
         let g:clang_complete_copen  = 1
         let g:clang_user_options    = '-std=c++11'
 
-        " you complete me...
+        """ you complete me...
         
         let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
         let g:ycm_collect_identifiers_from_tags_files=1
         let g:ycm_confirm_extra_conf = 0
 
-        " my ctags options...
+        """ my C/++ ctags options...
         
         let g:my_ctags_options = [ '--sort=foldcase', '--languages=C,C++', '--c++-kinds=+plx', '--fields=+liaS', '--extra=+q', '-I __attribute__+' ]
 
-        " ctrl+p
+        """ ctrl+p
         
         let g:ctrlp_map = ''
         let g:ctrlp_dotfiles = 0
 
-        " powerline
+        """ powerline
         
         set encoding=utf-8
         let g:Powerline_symbols = 'fancy'
        
-        " ghc-mod
-        
-        let g:ghcmod_ghc_options = ['-Wall -cpp']
-
         runtime! ftplugin/man.vim
         runtime! ftplugin/gzip.vim
         runtime! ftplugin/taglist.vim 
 
-        " syntastic: c++11/Haskell
+        """ syntastic: C++/Haskell
         
         let g:syntastic_cpp_compiler = 'clang++'
         let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++'
@@ -232,7 +231,7 @@ if has("autocmd")
 
         " disable syntax on very huge files...
         
-        autocmd BufReadPre *  if getfsize(expand('<afile>')) > 1000000 | syntax off | endif
+        autocmd BufReadPre *  if getfsize(expand('<afile>')) > 100000 | syntax off | endif
         autocmd BufEnter * set tags=~/.vim/system-tags,./tags,../tags,tags,TAGS
 
         autocmd QuickFixCmdPost [^l]* nested cwindow
@@ -249,9 +248,9 @@ if has("autocmd")
         
         autocmd BufWinEnter * call ResCur()
 
-        autocmd FileType haskell call FormatHaskell()
-        autocmd FileType cpp     call FormatCpp()
-        autocmd FileType c       call FormatKernel()
+        autocmd FileType haskell call SetupHaskell()
+        autocmd FileType cpp     call SetupCpp()
+        autocmd FileType c       call SetupKernel()
 endif
 
 " }
@@ -285,6 +284,14 @@ function! UpdateCppTags()
         exec ":silent !echo Updating ctags..."
         exec ":silent !ctags -R " . join(g:my_ctags_options, ' ')    
         echohl StatusLine | echo "Ctags updated." | echohl None
+endfunction
+
+" hasktags functions 
+
+function! UpdateHaskTags()
+        exec ":silent !echo Updating hasktags..."
+        exec ":silent !hasktags -c --ignore-close-implementation ."   
+        echohl StatusLine | echo "Hasktags updated." | echohl None
 endfunction
 
 " http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window
@@ -392,13 +399,12 @@ augroup END
     command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=hide noswapfile | R !<args>
     command! -bang -nargs=? QFix call QFixToggle(<bang>0)
     command! -nargs=0 -bar Qargs execute 'args' QuickFixFilenames()
-    command! UpdateTags call UpdateCppTags()
 " }
 
 
 " language_options {
 
-function FormatKernel()
+function SetupKernel()
 
         setlocal tabstop=8
         setlocal shiftwidth=8
@@ -442,7 +448,7 @@ function FormatKernel()
         
 endfunction
 
-function FormatCpp()
+function SetupCpp()
         
         cmap ;tf ?^{??(?,/^}/
         map <C-]> :exe "tj " . expand("<cword>") <CR>
@@ -461,11 +467,7 @@ function FormatCpp()
         iab #d #define 
         iab #p #pragma once
 
-        iab .b .begin()<C-R>=Eatchar('\s')<CR>
-        iab .e .end()<C-R>=Eatchar('\s')<CR>
-        iab ->b ->begin()<C-R>=Eatchar('\s')<CR>
-        iab ->e ->end()<C-R>=Eatchar('\s')<CR>
-
+        iab ns namespace<C-R>=Eatchar('\s')<CR>
         iab co std::cout<C-R>=Eatchar('\s')<CR>
         iab ce std::cerr<C-R>=Eatchar('\s')<CR>
         iab el std::endl<C-R>=Eatchar('\s')<CR>
@@ -485,6 +487,8 @@ function FormatCpp()
         
         noremap <F2>    :AssGen<CR>
         noremap <F3>    :AssGuard<CR>
+        noremap <F5>    :call UpdateCppTags()<CR>
+        noremap <F7>    :Make<CR>
         noremap <F11>   :AssClangRun <CR>
         noremap <S-F11> :AssGccRun <CR>
         noremap <S-F10> :AssIncludeThis<CR>
@@ -495,7 +499,7 @@ function FormatCpp()
  
 endfunction
 
-function FormatHaskell()
+function SetupHaskell()
         
         setlocal shiftwidth=4 
         setlocal tabstop=4 
@@ -506,7 +510,6 @@ function FormatHaskell()
 
         " abbreviations...
         "
-        
         iab HTH {-# LANGUAGE TemplateHaskell #-}
         iab HEQ {-# LANGUAGE ExistentialQuantification #-}
         iab HFI {-# LANGUAGE FlexibleInstances #-}
@@ -518,15 +521,12 @@ function FormatHaskell()
         iab HMH {-# LANGUAGE MagiHash #-}
         iab HGA {-# LANGUAGE GADTs #-}
 
-        " ghc-mod
-        
-        noremap <leader>t :GhcModType<CR>
-        noremap <leader><leader>t :GhcModTypeClear<CR>
-
         " hdevtools...
         "
         nnoremap <buffer> <F1> :HdevtoolsType<CR>
         nnoremap <buffer> <silent> <F2> :HdevtoolsClear<CR>
+        nnoremap <buffer> <silent> <F3> :HdevtoolsInfo<CR>
+        noremap  <F5> :call UpdateHaskTags()<CR>
  
         let g:hdevtools_options = '-g-isrc -g-Wall -g-cpp'
 
@@ -542,10 +542,9 @@ endfunction
         
         " general keys...
         "
-        noremap <F5>    :UpdateTags<CR>
         noremap <F6>    :cnext<CR>
+        noremap <S><F6> :cprev<CR>
 
-        noremap <F7>    :Make<CR>
         noremap <F8>    :QFix<CR>
         noremap <F9>    :NERDTreeToggle<CR>
         noremap <F10>   :GundoToggle<CR>
