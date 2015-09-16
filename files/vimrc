@@ -14,16 +14,13 @@
     call vundle#begin()
 
     Plugin 'gmarik/Vundle.vim'
-
     Plugin 'Cpp11-Syntax-Support'
     Plugin 'YankRing.vim'
-
     Plugin 'tpope/vim-fugitive'
     Plugin 'tpope/vim-abolish'
     Plugin 'tpope/vim-commentary'
     Plugin 'tpope/vim-dispatch'
     Plugin 'tpope/vim-surround'
-
     Plugin 'triglav/vim-visual-increment'
     Plugin 'bling/vim-airline'
     Plugin 'kien/ctrlp.vim'
@@ -31,11 +28,11 @@
     Plugin 'scrooloose/syntastic'
     Plugin 'majutsushi/tagbar'
     Plugin 'Shougo/vimproc.vim'
-    Plugin 'eagletmt/neco-ghc'
     Plugin 'nathanaelkane/vim-indent-guides'
 
+    " Haskell
     Plugin 'bitc/vim-hdevtools'
-
+    Plugin 'eagletmt/neco-ghc'
     Plugin 'bkad/CamelCaseMotion.git'
 
     " All of your Plugins must be added before the following line
@@ -46,8 +43,6 @@
 
 " general {
 
-        " execute pathogen#infect()
-        
         syntax enable
 
         filetype on
@@ -155,7 +150,7 @@
         endif
 
         set diffopt=filler,iwhite,context:10
-"}
+" }
   
 
 " plugin config {
@@ -440,11 +435,10 @@ function SetupKernel()
         iab __F __FUNCTION__
         iab __G __GXX_EXPERIMENTAL_CXX0X__
 
-        noremap <F2>    :AssGen<CR>
-        noremap <F3>    :AssGuard<CR>
-        noremap <F11>   :AssClangRun <CR>
-        noremap <S-F11> :AssGccRun <CR>
-        noremap <S-F10> :AssIncludeThis<CR>
+        nnoremap <F2>    :AssGen<CR>
+        nnoremap <F11>   :AssClangRun <CR>
+        nnoremap <S-F11> :AssGccRun <CR>
+        nnoremap <S-F10> :AssIncludeThis<CR>
         
 endfunction
 
@@ -485,29 +479,28 @@ function SetupCpp()
 
         " C++ ass'instant: -> github.com/awgn/ass 
         
-        noremap <F2>    :AssGen<CR>
-        noremap <F3>    :AssGuard<CR>
-        noremap <F5>    :call UpdateCppTags()<CR>
-        noremap <F7>    :Make<CR>
-        noremap <F11>   :AssClangRun <CR>
-        noremap <S-F11> :AssGccRun <CR>
-        noremap <S-F10> :AssIncludeThis<CR>
+        nnoremap <F2>    :AssGen<CR>
+        nnoremap <F4>    :call UpdateCppTags()<CR>
+        nnoremap <F7>    :Make<CR>
+        nnoremap <F11>   :AssClangRun <CR>
+        nnoremap <S-F11> :AssGccRun <CR>
+        nnoremap <S-F10> :AssIncludeThis<CR>
         
         " find the string in non-comment lines (C/C++)
         
-        noremap <leader>f :/\v((\/\*\|\/\/\|^\s*\*[^/]).*)@<!
+        nnoremap <leader>f :/\v((\/\*\|\/\/\|^\s*\*[^/]).*)@<!
  
 endfunction
 
 function SetupHaskell()
         
+        set makeprg=runhaskell
+
         setlocal shiftwidth=4 
         setlocal tabstop=4 
         setlocal iskeyword=a-z,A-Z,48-57,_,'
         setlocal omnifunc=necoghc#omnifunc
         
-        set makeprg=cabal
-
         " abbreviations...
         "
         iab HTH {-# LANGUAGE TemplateHaskell #-}
@@ -518,15 +511,17 @@ function SetupHaskell()
         iab HTS {-# LANGUAGE TupleSections #-}
         iab HBP {-# LANGUAGE BangPatterns #-}
         iab HOS {-# LANGUAGE OverloadedStrings #-}
+        iab HOL {-# LANGUAGE OverloadedLists #-}
         iab HMH {-# LANGUAGE MagiHash #-}
         iab HGA {-# LANGUAGE GADTs #-}
+        iab HGD {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
         " hdevtools...
         "
         nnoremap <buffer> <F1> :HdevtoolsType<CR>
         nnoremap <buffer> <silent> <F2> :HdevtoolsClear<CR>
         nnoremap <buffer> <silent> <F3> :HdevtoolsInfo<CR>
-        noremap  <F5> :call UpdateHaskTags()<CR>
+        nnoremap <F4> :call UpdateHaskTags()<CR>
  
         let g:hdevtools_options = '-g-isrc -g-Wall -g-cpp'
 
@@ -542,44 +537,43 @@ endfunction
         
         " general keys...
         "
-        noremap <F6>    :cnext<CR>
-        noremap <S><F6> :cprev<CR>
-
-        noremap <F8>    :QFix<CR>
-        noremap <F9>    :NERDTreeToggle<CR>
-        noremap <F10>   :GundoToggle<CR>
-        noremap <F12>   :TagbarToggle<CR>
+        nnoremap <F5>    :cprev<CR>
+        nnoremap <F6>    :cnext<CR>
+        nnoremap <F8>    :QFix<CR>
+        nnoremap <F9>    :NERDTreeToggle<CR>
+        nnoremap <F10>   :GundoToggle<CR>
+        nnoremap <F12>   :TagbarToggle<CR>
 
         " leaders...
         "
         
-        noremap <leader>p :CtrlP<CR>
+        nnoremap <leader>p :CtrlP<CR>
         
         " search and stuff
         
-        noremap / /\v
-        noremap ? ?\v
+        nnoremap / /\v
+        nnoremap ? ?\v
         
-        noremap <leader>/ /\<\><Left><Left>
-        noremap <leader>? ?\<\><Left><Left>
-        noremap <leader>c :/\(\<class\>\\|\<struct\>\)\s*[a-zA-Z_][a-zA-Z0-9_]*.*\_s*{<CR> 
+        nnoremap <leader>/ /\<\><Left><Left>
+        nnoremap <leader>? ?\<\><Left><Left>
+        nnoremap <leader>c :/\(\<class\>\\|\<struct\>\)\s*[a-zA-Z_][a-zA-Z0-9_]*.*\_s*{<CR> 
         
         " eliminate ugly \r 
         
-        noremap <leader>r :%s/\r//g<CR>
+        nnoremap <leader>r :%s/\r//g<CR>
 
         " replace the world under cursor...
         
-        noremap <leader>s :%s/\<<C-R><C-W>\>/
+        nnoremap <leader>s :%s/\<<C-R><C-W>\>/
         
         " search the word under cursor...
        
-        noremap <leader>g :grep -r -w <C-R><C-W> 
+        nnoremap <leader>g /\v<C-R><C-W><CR>:grep -r -w <C-R><C-W> 
         
         
         " prepare exact replace
         
-        noremap <leader>S :%s/\<\>/<Left><Left><Left>
+        nnoremap <leader>S :%s/\<\>/<Left><Left><Left>
 
         " disable arrows
         
@@ -595,7 +589,7 @@ endfunction
         " leader d -> delete the current line, leaving the default register
         " untouched
 
-        noremap <leader>d "_dd
+        nnoremap <leader>d "_dd
         
         " D, delete a visual block using non default register
         
