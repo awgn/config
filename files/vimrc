@@ -14,7 +14,6 @@
     call vundle#begin()
 
     Plugin 'gmarik/Vundle.vim'
-    Plugin 'Cpp11-Syntax-Support'
     Plugin 'YankRing.vim'
     Plugin 'tpope/vim-fugitive'
     Plugin 'tpope/vim-abolish'
@@ -29,6 +28,10 @@
     Plugin 'majutsushi/tagbar'
     Plugin 'Shougo/vimproc.vim'
     Plugin 'nathanaelkane/vim-indent-guides'
+
+    Plugin 'henrik/vim-qargs'
+    Plugin 'justinmk/vim-sneak'
+    Plugin 'mtth/scratch.vim'
 
     " Haskell
     Plugin 'bitc/vim-hdevtools'
@@ -186,7 +189,7 @@
 
         """ ctrl+p
         
-        let g:ctrlp_map = ''
+        let g:ctrlp_map = '<S-C-p>'
         let g:ctrlp_dotfiles = 0
 
         """ powerline
@@ -530,10 +533,6 @@ endfunction
 " }
 
 " mapping {
-        
-        " set mapleader
-        
-        let mapleader = ","
         
         " general keys...
         "
