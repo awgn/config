@@ -14,29 +14,40 @@
     call vundle#begin()
 
     Plugin 'gmarik/Vundle.vim'
-    Plugin 'YankRing.vim'
+
+    Plugin 'maxbrunsfeld/vim-yankstack'    
+    " Plugin 'YankRing.vim'
+    
+    Plugin 'terryma/vim-multiple-cursors.git'
+
+    Plugin 'scrooloose/syntastic'
+    Plugin 'majutsushi/tagbar'
+    Plugin 'bling/vim-airline'
+    Plugin 'kien/ctrlp.vim'
+    Plugin 'sjl/gundo.vim'
+    
+    Plugin 'airblade/vim-gitgutter'
+
+    Plugin 'henrik/vim-indexed-search'
+    Plugin 'bkad/CamelCaseMotion.git'
+
     Plugin 'tpope/vim-fugitive'
     Plugin 'tpope/vim-abolish'
     Plugin 'tpope/vim-commentary'
     Plugin 'tpope/vim-dispatch'
     Plugin 'tpope/vim-surround'
-    Plugin 'triglav/vim-visual-increment'
-    Plugin 'bling/vim-airline'
-    Plugin 'kien/ctrlp.vim'
-    Plugin 'sjl/gundo.vim'
-    Plugin 'scrooloose/syntastic'
-    Plugin 'majutsushi/tagbar'
+
     Plugin 'Shougo/vimproc.vim'
+    " Plugin 'Shougo/neocomplete.vim'
+    
+    Plugin 'triglav/vim-visual-increment'
     Plugin 'nathanaelkane/vim-indent-guides'
-
     Plugin 'henrik/vim-qargs'
-    Plugin 'justinmk/vim-sneak'
-    Plugin 'mtth/scratch.vim'
 
-    " Haskell
+    """ Haskell
+    
     Plugin 'bitc/vim-hdevtools'
     Plugin 'eagletmt/neco-ghc'
-    Plugin 'bkad/CamelCaseMotion.git'
 
     " All of your Plugins must be added before the following line
     
@@ -51,7 +62,8 @@
         filetype on
         filetype plugin on
         filetype indent on
-       
+    
+        set shell=bash
         set nocompatible        	
 
         set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
@@ -67,6 +79,7 @@
  
         set nofoldenable
         set novisualbell                
+        set noerrorbells
         set hidden
         set lazyredraw
 
@@ -112,7 +125,7 @@
 
         set laststatus=2
         
-        set updatetime=100
+        set updatetime=2750
         
         set clipboard=unnamed
         set viminfo='10,<10000,:100,%,s1000,n~/.viminfo
@@ -157,14 +170,18 @@
   
 
 " plugin config {
+
+        """ my C/++ ctags options...
         
-        " this to avoid spurious highlight with c++11 lambdas 
+        let g:my_ctags_options = [ '--sort=foldcase', '--languages=C,C++', '--c++-kinds=+plx', '--fields=+liaS', '--extra=+q', '-I __attribute__+' ]
+
+        """ neocomplete
+
+        let g:neocomplete#enable_at_startup = 1
+
+        """ this to avoid spurious highlight with C++11 lambdas 
         
         let c_no_curly_error = 1
-
-        let Tlist_Use_Right_Window  = 1
-
-        let g:load_doxygen_syntax   = 1
 
 
         """ tagbar
@@ -175,7 +192,7 @@
         
         let g:clang_complete_auto   = 0
         let g:clang_complete_copen  = 1
-        let g:clang_user_options    = '-std=c++11'
+        let g:clang_user_options    = '-std=c++1y'
 
         """ you complete me...
         
@@ -183,13 +200,9 @@
         let g:ycm_collect_identifiers_from_tags_files=1
         let g:ycm_confirm_extra_conf = 0
 
-        """ my C/++ ctags options...
-        
-        let g:my_ctags_options = [ '--sort=foldcase', '--languages=C,C++', '--c++-kinds=+plx', '--fields=+liaS', '--extra=+q', '-I __attribute__+' ]
-
         """ ctrl+p
         
-        let g:ctrlp_map = '<S-C-p>'
+        let g:ctrlp_map = ''
         let g:ctrlp_dotfiles = 0
 
         """ powerline
@@ -204,9 +217,31 @@
         """ syntastic: C++/Haskell
         
         let g:syntastic_cpp_compiler = 'clang++'
-        let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++'
+        let g:syntastic_cpp_compiler_options = ' -std=c++1y -stdlib=libc++'
         let g:syntastic_haskell_hdevtools_args = '-g-isrc -g-Wall -g-cpp'
 
+        """ git-gutter
+    
+        let g:gitgutter_sign_column_always = 0
+        let g:gitgutter_realtime = 1
+        let g:gitgutter_eager = 1
+
+        """ vim-multiple-cursor
+
+        let g:multi_cursor_next_key='<C-n>'
+        let g:multi_cursor_prev_key='<C-m>'
+        let g:multi_cursor_skip_key='<C-x>'
+        let g:multi_cursor_quit_key='<Esc>'
+
+        """ yankstack
+
+        nmap <leader>p <Plug>yankstack_substitute_older_paste
+        nmap <leader>P <Plug>yankstack_substitute_newer_paste
+
+        """ misc...
+
+        let Tlist_Use_Right_Window  = 1
+        let g:load_doxygen_syntax   = 1
 "}
 
 
@@ -229,7 +264,7 @@ if has("autocmd")
 
         " disable syntax on very huge files...
         
-        autocmd BufReadPre *  if getfsize(expand('<afile>')) > 100000 | syntax off | endif
+        autocmd BufReadPre *  if getfsize(expand('<afile>')) > 1000000 | syntax off | endif
         autocmd BufEnter * set tags=~/.vim/system-tags,./tags,../tags,tags,TAGS
 
         autocmd QuickFixCmdPost [^l]* nested cwindow
@@ -248,7 +283,7 @@ if has("autocmd")
 
         autocmd FileType haskell call SetupHaskell()
         autocmd FileType cpp     call SetupCpp()
-        autocmd FileType c       call SetupKernel()
+        autocmd FileType c       call SetupC()
 endif
 
 " }
@@ -278,19 +313,23 @@ endfunc
 
 " ctags functions 
 
-function! UpdateCppTags()
-        exec ":silent !echo Updating ctags..."
+function! s:update_ctags()
         exec ":silent !ctags -R " . join(g:my_ctags_options, ' ')    
-        echohl StatusLine | echo "Ctags updated." | echohl None
+        exec ":redraw!"
+        echohl StatusLine | echo "Ctags updated." 
 endfunction
 
 " hasktags functions 
 
-function! UpdateHaskTags()
-        exec ":silent !echo Updating hasktags..."
+function! s:update_htags ()
         exec ":silent !hasktags -c --ignore-close-implementation ."   
-        echohl StatusLine | echo "Hasktags updated." | echohl None
+        exec ":redraw!"
+        echohl StatusLine | echo "Hasktags updated." 
 endfunction
+         
+
+command! UpdateCTags call s:update_ctags()
+command! UpdateHaskTags call s:update_htags()
 
 " http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window
 " toggles the quickfix window.
@@ -402,12 +441,12 @@ augroup END
 
 " language_options {
 
-function SetupKernel()
+function SetupC()
 
         setlocal tabstop=8
         setlocal shiftwidth=8
         setlocal softtabstop=8
-        setlocal textwidth=80
+        setlocal textwidth=120
         setlocal noexpandtab
 
         setlocal cindent
@@ -419,14 +458,14 @@ function SetupKernel()
         setlocal iskeyword=a-z,A-Z,48-57,_,'
         setlocal noexpandtab
         
-        syn keyword cOperator  likely unlikely 
+        syn keyword cOperator likely unlikely 
         syn keyword cType u8 u16 u32 u64 s8 s16 s32 s64
 
         highlight default link LinuxError ErrorMsg
 
         syn match LinuxError / \+\ze\t/     " spaces before tab
         syn match LinuxError /\s\+$/        " trailing whitespaces
-        syn match LinuxError /\%121v.\+/    " virtual column 121 and more
+        "syn match LinuxError /\%121v.\+/    " virtual column 121 and more
 
         iab intmain int<CR>main(int argc, char *argv[])<CR>{<CR>return 0;<CR>}<CR><UP><UP><RIGHT>
         iab #i #include <><Left><C-R>=Eatchar('\s')<CR>
@@ -436,11 +475,12 @@ function SetupKernel()
 
         iab __P __PRETTY_FUNCTION__
         iab __F __FUNCTION__
-        iab __G __GXX_EXPERIMENTAL_CXX0X__
 
         nnoremap <F2>    :AssGen<CR>
-        nnoremap <F11>   :AssClangRun <CR>
-        nnoremap <S-F11> :AssGccRun <CR>
+        nnoremap <F4>    :UpdateCTags<CR>
+        nnoremap <F7>    :Make<CR>
+        nnoremap <F11>   :AssClangRun<CR>
+        nnoremap <S-F11> :AssGccRun<CR>
         nnoremap <S-F10> :AssIncludeThis<CR>
         
 endfunction
@@ -469,24 +509,24 @@ function SetupCpp()
         iab ce std::cerr<C-R>=Eatchar('\s')<CR>
         iab el std::endl<C-R>=Eatchar('\s')<CR>
 
+        iab dv declval<Left><C-R>=Eatchar('\s')<CR>
         iab dt decltype()<Left><C-R>=Eatchar('\s')<CR>
         iab tn typename
         iab td typedef
-        iab tp template <><Left><C-R>=Eatchar('\s')<CR>
+        "iab tp template <><Left><C-R>=Eatchar('\s')<CR>
 
         iab .\ []() {}<Left><Left><Left><Left><Left><Left><C-R>=Eatchar('\s')<CR>
 
         iab __P __PRETTY_FUNCTION__
         iab __F __FUNCTION__
-        iab __G __GXX_EXPERIMENTAL_CXX0X__
 
         " C++ ass'instant: -> github.com/awgn/ass 
         
         nnoremap <F2>    :AssGen<CR>
-        nnoremap <F4>    :call UpdateCppTags()<CR>
+        nnoremap <F4>    :UpdateCTags<CR>
         nnoremap <F7>    :Make<CR>
-        nnoremap <F11>   :AssClangRun <CR>
-        nnoremap <S-F11> :AssGccRun <CR>
+        nnoremap <F11>   :AssClangRun<CR>
+        nnoremap <S-F11> :AssGccRun<CR>
         nnoremap <S-F10> :AssIncludeThis<CR>
         
         " find the string in non-comment lines (C/C++)
@@ -497,27 +537,35 @@ endfunction
 
 function SetupHaskell()
         
-        set makeprg=runhaskell
+        set makeprg=runhaskell\ Setup.hs\ build\ --ghc-options="-W"
 
-        setlocal shiftwidth=4 
         setlocal tabstop=4 
+        setlocal softtabstop=4 
+        setlocal shiftwidth=2 
+        setlocal expandtab
+
         setlocal iskeyword=a-z,A-Z,48-57,_,'
         setlocal omnifunc=necoghc#omnifunc
         
         " abbreviations...
         "
-        iab HTH {-# LANGUAGE TemplateHaskell #-}
-        iab HEQ {-# LANGUAGE ExistentialQuantification #-}
-        iab HFI {-# LANGUAGE FlexibleInstances #-}
-        iab HMP {-# LANGUAGE MultiParamTypeClasses #-}
-        iab HVP {-# LANGUAGE ViewPatterns #-}
-        iab HTS {-# LANGUAGE TupleSections #-}
-        iab HBP {-# LANGUAGE BangPatterns #-}
-        iab HOS {-# LANGUAGE OverloadedStrings #-}
-        iab HOL {-# LANGUAGE OverloadedLists #-}
-        iab HMH {-# LANGUAGE MagiHash #-}
-        iab HGA {-# LANGUAGE GADTs #-}
-        iab HGD {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+        iab LTH {-# LANGUAGE TemplateHaskell #-}
+        iab LEQ {-# LANGUAGE ExistentialQuantification #-}
+        iab LFI {-# LANGUAGE FlexibleInstances #-}
+        iab LMP {-# LANGUAGE MultiParamTypeClasses #-}
+        iab LVP {-# LANGUAGE ViewPatterns #-}
+        iab LTS {-# LANGUAGE TupleSections #-}
+        iab LBP {-# LANGUAGE BangPatterns #-}
+        iab LMH {-# LANGUAGE MagiHash #-}
+        iab LGA {-# LANGUAGE GADTs #-}
+
+        iab LOS {-# LANGUAGE OverloadedStrings #-}
+        iab LOL {-# LANGUAGE OverloadedLists #-}
+
+        iab LDN {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+        iab LDF {-# LANGUAGE DeriveFunctor #-}
+        iab LDL {-# LANGUAGE DeriveFoldable #-}
+        iab LDT {-# LANGUAGE DeriveTraversable #-}
 
         " hdevtools...
         "
@@ -534,6 +582,7 @@ endfunction
 
 " mapping {
         
+
         " general keys...
         "
         nnoremap <F5>    :cprev<CR>
@@ -546,12 +595,8 @@ endfunction
         " leaders...
         "
         
-        nnoremap <leader>p :CtrlP<CR>
-        
-        " search and stuff
-        
-        nnoremap / /\v
-        nnoremap ? ?\v
+        " nnoremap / /\v
+        " nnoremap ? ?\v
         
         nnoremap <leader>/ /\<\><Left><Left>
         nnoremap <leader>? ?\<\><Left><Left>
@@ -567,7 +612,7 @@ endfunction
         
         " search the word under cursor...
        
-        nnoremap <leader>g /\v<C-R><C-W><CR>:grep -r -w <C-R><C-W> 
+        nnoremap <leader>g :grep -r -w <C-R><C-W> 
         
         
         " prepare exact replace
