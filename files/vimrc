@@ -16,13 +16,13 @@
     Plugin 'gmarik/Vundle.vim'
 
     Plugin 'maxbrunsfeld/vim-yankstack'    
-    " Plugin 'YankRing.vim'
-    
+     
     Plugin 'terryma/vim-multiple-cursors.git'
 
     Plugin 'scrooloose/syntastic'
     Plugin 'majutsushi/tagbar'
-    Plugin 'bling/vim-airline'
+    Plugin 'vim-airline/vim-airline'
+    Plugin 'vim-airline/vim-airline-themes'
     Plugin 'kien/ctrlp.vim'
     Plugin 'sjl/gundo.vim'
     
@@ -44,16 +44,19 @@
     Plugin 'nathanaelkane/vim-indent-guides'
     Plugin 'henrik/vim-qargs'
 
-    """ Haskell
+    " Haskell
     
     Plugin 'bitc/vim-hdevtools'
     Plugin 'eagletmt/neco-ghc'
+    "Plugin 'eagletmt/ghcmod-vim' -> replaced by hdevtools 
 
-    " All of your Plugins must be added before the following line
-    
+    " Idris
+    Plugin 'idris-hackers/idris-vim'
+
     call vundle#end()            " required
 
 " }
+
 
 " general {
 
@@ -66,14 +69,14 @@
         set shell=bash
         set nocompatible        	
 
-        set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
+        "set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
 
         set backspace=indent,eol,start 
         
         set completeopt=menu,longest
         set complete=.,w,b,t,i
 
-        set term=screen-256color
+        " set term=screen-256color
         
         set shortmess+=at
  
@@ -106,7 +109,6 @@
         set history=1000
         set undolevels=1000
 
-        "set mouse=a
 
         set ruler
         set magic
@@ -167,17 +169,13 @@
 
         set diffopt=filler,iwhite,context:10
 " }
-  
+ 
 
 " plugin config {
 
         """ my C/++ ctags options...
         
         let g:my_ctags_options = [ '--sort=foldcase', '--languages=C,C++', '--c++-kinds=+plx', '--fields=+liaS', '--extra=+q', '-I __attribute__+' ]
-
-        """ neocomplete
-
-        let g:neocomplete#enable_at_startup = 1
 
         """ this to avoid spurious highlight with C++11 lambdas 
         
@@ -193,12 +191,6 @@
         let g:clang_complete_auto   = 0
         let g:clang_complete_copen  = 1
         let g:clang_user_options    = '-std=c++1y'
-
-        """ you complete me...
-        
-        let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
-        let g:ycm_collect_identifiers_from_tags_files=1
-        let g:ycm_confirm_extra_conf = 0
 
         """ ctrl+p
         
@@ -272,23 +264,24 @@ if has("autocmd")
 
         autocmd FileType text setlocal textwidth=118
         
-        " clear trailing white-spaces...
+        " clear trailing white-spaces (currently disabled: see
+        " RemoveTrailingSpaces command)
         " 
-        autocmd FileType cpp,c,haskell,make autocmd BufWritePre <buffer> :%s/\s\+$//e
+        " autocmd FileType cpp,c,haskell,make autocmd BufWritePre <buffer> :%s/\s\+$//e
 
         autocmd FileType make set noexpandtab
         autocmd FileType make set shiftwidth=8
         
         autocmd BufWinEnter * call ResCur()
 
-        autocmd FileType haskell call SetupHaskell()
-        autocmd FileType cpp     call SetupCpp()
-        autocmd FileType c       call SetupC()
+        autocmd FileType haskell call LangHaskell()
+        autocmd FileType cpp     call LangCpp()
+        autocmd FileType c       call LangC()
 endif
 
 " }
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " functions {
 
@@ -416,32 +409,34 @@ function! SearchInside(synName, pattern)
 
 endfunction
 
-command! -nargs=+ -complete=command SearchOutside call SearchOutside(<f-args>)
-command! -nargs=+ -complete=command SearchInside  call SearchInside(<f-args>)
 
-
-
-" used to track the quickfix window
-
-augroup QFixToggle
- autocmd!
- autocmd BufWinEnter quickfix let g:qfix_win = bufnr("$")
- autocmd BufWinLeave * if exists("g:qfix_win") && expand("<abuf>") == g:qfix_win | unlet! g:qfix_win | endif
-augroup END
 
 " }
 
 " command {
  
+    command! -nargs=+ -complete=command SearchOutside call SearchOutside(<f-args>)
+    command! -nargs=+ -complete=command SearchInside  call SearchInside(<f-args>)
+
     command! -nargs=* -complete=shellcmd R new | setlocal buftype=nofile bufhidden=hide noswapfile | R !<args>
     command! -bang -nargs=? QFix call QFixToggle(<bang>0)
     command! -nargs=0 -bar Qargs execute 'args' QuickFixFilenames()
+
+    command! -bang -nargs=0 RemoveTrailingSpaces :%s/\s\+$//e
+
+    " used to track the quickfix window
+
+    augroup QFixToggle
+        autocmd!
+        autocmd BufWinEnter quickfix let g:qfix_win = bufnr("$")
+        autocmd BufWinLeave * if exists("g:qfix_win") && expand("<abuf>") == g:qfix_win | unlet! g:qfix_win | endif
+    augroup END
 " }
 
 
 " language_options {
 
-function SetupC()
+function LangC()
 
         setlocal tabstop=8
         setlocal shiftwidth=8
@@ -485,7 +480,7 @@ function SetupC()
         
 endfunction
 
-function SetupCpp()
+function LangCpp()
         
         cmap ;tf ?^{??(?,/^}/
         map <C-]> :exe "tj " . expand("<cword>") <CR>
@@ -535,47 +530,58 @@ function SetupCpp()
  
 endfunction
 
-function SetupHaskell()
-        
-        set makeprg=runhaskell\ Setup.hs\ build\ --ghc-options="-W"
-
-        setlocal tabstop=4 
-        setlocal softtabstop=4 
-        setlocal shiftwidth=2 
-        setlocal expandtab
-
-        setlocal iskeyword=a-z,A-Z,48-57,_,'
-        setlocal omnifunc=necoghc#omnifunc
-        
-        " abbreviations...
-        "
-        iab LTH {-# LANGUAGE TemplateHaskell #-}
-        iab LEQ {-# LANGUAGE ExistentialQuantification #-}
-        iab LFI {-# LANGUAGE FlexibleInstances #-}
-        iab LMP {-# LANGUAGE MultiParamTypeClasses #-}
-        iab LVP {-# LANGUAGE ViewPatterns #-}
-        iab LTS {-# LANGUAGE TupleSections #-}
-        iab LBP {-# LANGUAGE BangPatterns #-}
-        iab LMH {-# LANGUAGE MagiHash #-}
-        iab LGA {-# LANGUAGE GADTs #-}
-
-        iab LOS {-# LANGUAGE OverloadedStrings #-}
-        iab LOL {-# LANGUAGE OverloadedLists #-}
-
-        iab LDN {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-        iab LDF {-# LANGUAGE DeriveFunctor #-}
-        iab LDL {-# LANGUAGE DeriveFoldable #-}
-        iab LDT {-# LANGUAGE DeriveTraversable #-}
-
-        " hdevtools...
-        "
-        nnoremap <buffer> <F1> :HdevtoolsType<CR>
-        nnoremap <buffer> <silent> <F2> :HdevtoolsClear<CR>
-        nnoremap <buffer> <silent> <F3> :HdevtoolsInfo<CR>
-        nnoremap <F4> :call UpdateHaskTags()<CR>
+function LangHaskell()
+         
+         set makeprg=runhaskell\ Setup.hs\ build\ --ghc-options="-W"
  
-        let g:hdevtools_options = '-g-isrc -g-Wall -g-cpp'
-
+         setlocal tabstop=4 
+         setlocal softtabstop=4 
+         setlocal shiftwidth=2 
+         setlocal expandtab
+ 
+         setlocal iskeyword=a-z,A-Z,48-57,_,'
+         setlocal omnifunc=necoghc#omnifunc
+         
+         " abbreviations...
+         "
+        
+         iab GHC 
+                    \<CR>{-# LANGUAGE ExistentialQuantification  #-}
+                    \<CR>{-# LANGUAGE MultiParamTypeClasses      #-}
+                    \<CR>{-# LANGUAGE FunctionalDependencies     #-}
+                    \<CR>{-# LANGUAGE RankNTypes                 #-}
+                    \<CR>{-# LANGUAGE FlexibleInstances          #-}
+                    \<CR>{-# LANGUAGE FlexibleContexts           #-}
+                    \<CR>{-# LANGUAGE TypeSynonymInstances       #-}
+                    \<CR>{-# LANGUAGE ScopedTypeVariables        #-}
+                    \<CR>{-# LANGUAGE ViewPatterns               #-}
+                    \<CR>{-# LANGUAGE DisambiguateRecordFields   #-}
+                    \<CR>{-# LANGUAGE NamedFieldPuns             #-}
+                    \<CR>{-# LANGUAGE TupleSections              #-}
+                    \<CR>{-# LANGUAGE BangPatterns               #-}
+                    \<CR>{-# LANGUAGE OverloadedStrings          #-}
+                    \<CR>{-# LANGUAGE OverloadedLists            #-}
+                    \<CR>{-# LANGUAGE AutoDeriveTypeable         #-}
+                    \<CR>{-# LANGUAGE DeriveDataTypeable         #-}
+                    \<CR>{-# LANGUAGE DeriveGeneric              #-}
+                    \<CR>{-# LANGUAGE DeriveFunctor              #-}
+                    \<CR>{-# LANGUAGE DeriveFoldable             #-}
+                    \<CR>{-# LANGUAGE DeriveTraversable          #-}
+                    \<CR>{-# LANGUAGE GeneralizedNewtypeDeriving #-} 
+                    \<CR>{-# LANGUAGE TypeOperators              #-} 
+                    \<CR>{-# LANGUAGE TypeFamilies               #-} 
+                    \<CR>{-# LANGUAGE GADTs                      #-}
+                    \<CR>{-# LANGUAGE CPP                        #-}
+ 
+         " hdevtools...
+         "
+         nnoremap <buffer> <F1> :HdevtoolsType<CR>
+         nnoremap <buffer> <silent> <F2> :HdevtoolsClear<CR>
+         nnoremap <buffer> <silent> <F3> :HdevtoolsInfo<CR>
+         nnoremap <F4> :call UpdateHaskTags()<CR>
+  
+         let g:hdevtools_options = '-g-isrc -g-Wall -g-cpp'
+ 
 endfunction
 
 " }
