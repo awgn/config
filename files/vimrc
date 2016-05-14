@@ -10,50 +10,53 @@
 
     " set the runtime path to include Vundle and initialize
     
-    set rtp+=~/.vim/bundle/Vundle.vim
-    call vundle#begin()
+    call plug#begin('~/.vim/bundle')
+    
+    if has("nvim")
+        Plug 'benekastah/neomake'
+    endif
 
-    Plugin 'gmarik/Vundle.vim'
+    " Plug 'gmarik/Vundle.vim'
 
-    Plugin 'maxbrunsfeld/vim-yankstack'    
+    Plug 'maxbrunsfeld/vim-yankstack'    
      
-    Plugin 'terryma/vim-multiple-cursors.git'
+    Plug 'terryma/vim-multiple-cursors'
 
-    Plugin 'scrooloose/syntastic'
-    Plugin 'majutsushi/tagbar'
-    Plugin 'vim-airline/vim-airline'
-    Plugin 'vim-airline/vim-airline-themes'
-    Plugin 'kien/ctrlp.vim'
-    Plugin 'sjl/gundo.vim'
+    Plug 'scrooloose/syntastic'
+    Plug 'majutsushi/tagbar'
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+    Plug 'kien/ctrlp.vim'
+    Plug 'sjl/gundo.vim'
     
-    Plugin 'airblade/vim-gitgutter'
+    Plug 'airblade/vim-gitgutter'
 
-    Plugin 'henrik/vim-indexed-search'
-    Plugin 'bkad/CamelCaseMotion.git'
+    Plug 'henrik/vim-indexed-search'
+    Plug 'bkad/CamelCaseMotion'
 
-    Plugin 'tpope/vim-fugitive'
-    Plugin 'tpope/vim-abolish'
-    Plugin 'tpope/vim-commentary'
-    Plugin 'tpope/vim-dispatch'
-    Plugin 'tpope/vim-surround'
+    Plug 'tpope/vim-fugitive'
+    Plug 'tpope/vim-abolish'
+    Plug 'tpope/vim-commentary'
+    Plug 'tpope/vim-dispatch'
+    Plug 'tpope/vim-surround'
 
-    Plugin 'Shougo/vimproc.vim'
-    " Plugin 'Shougo/neocomplete.vim'
+    Plug 'Shougo/vimproc.vim'
+    " Plug 'Shougo/neocomplete.vim'
     
-    Plugin 'triglav/vim-visual-increment'
-    Plugin 'nathanaelkane/vim-indent-guides'
-    Plugin 'henrik/vim-qargs'
+    Plug 'triglav/vim-visual-increment'
+    Plug 'nathanaelkane/vim-indent-guides'
+    Plug 'henrik/vim-qargs'
 
     " Haskell
     
-    Plugin 'bitc/vim-hdevtools'
-    Plugin 'eagletmt/neco-ghc'
-    "Plugin 'eagletmt/ghcmod-vim' -> replaced by hdevtools 
+    Plug 'bitc/vim-hdevtools'
+    Plug 'eagletmt/neco-ghc'
+    "Plug 'eagletmt/ghcmod-vim' -> replaced by hdevtools 
 
     " Idris
-    Plugin 'idris-hackers/idris-vim'
-
-    call vundle#end()            " required
+    Plug 'idris-hackers/idris-vim'
+    
+    call plug#end()
 
 " }
 
@@ -68,8 +71,6 @@
     
         set shell=bash
         set nocompatible        	
-
-        "set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
 
         set backspace=indent,eol,start 
         
@@ -108,7 +109,7 @@
 
         set history=1000
         set undolevels=1000
-
+        set modelines=1
 
         set ruler
         set magic
@@ -130,7 +131,11 @@
         set updatetime=2750
         
         set clipboard=unnamed
-        set viminfo='10,<10000,:100,%,s1000,n~/.viminfo
+        if has("nvim")
+            set viminfo='10,<10000,:100,%,s1000,n~/.nviminfo
+        else
+            set viminfo='10,<10000,:100,%,s1000,n~/.viminfo
+        endif
 
         set spell
 
@@ -266,8 +271,9 @@ if has("autocmd")
         
         " clear trailing white-spaces (currently disabled: see
         " RemoveTrailingSpaces command)
-        " 
-        " autocmd FileType cpp,c,haskell,make autocmd BufWritePre <buffer> :%s/\s\+$//e
+        "
+        
+        autocmd FileType cpp,c,haskell,make autocmd BufWritePre <buffer> :RemoveTrailingSpaces
 
         autocmd FileType make set noexpandtab
         autocmd FileType make set shiftwidth=8
@@ -409,9 +415,8 @@ function! SearchInside(synName, pattern)
 
 endfunction
 
-
-
 " }
+
 
 " command {
  
@@ -536,7 +541,7 @@ function LangHaskell()
  
          setlocal tabstop=4 
          setlocal softtabstop=4 
-         setlocal shiftwidth=2 
+         setlocal shiftwidth=4 
          setlocal expandtab
  
          setlocal iskeyword=a-z,A-Z,48-57,_,'
@@ -545,7 +550,9 @@ function LangHaskell()
          " abbreviations...
          "
         
-         iab GHC 
+         iab GHC    {-# LANGUAGE #-}<LEFT><LEFT><LEFT><LEFT>
+
+         iab GHCALL 
                     \<CR>{-# LANGUAGE ExistentialQuantification  #-}
                     \<CR>{-# LANGUAGE MultiParamTypeClasses      #-}
                     \<CR>{-# LANGUAGE FunctionalDependencies     #-}
@@ -588,6 +595,9 @@ endfunction
 
 " mapping {
         
+        if has("nvim")
+            tnoremap <Esc> <C-\><C-n>
+        endif
 
         " general keys...
         "
