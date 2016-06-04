@@ -26,10 +26,11 @@
     Plug 'vim-airline/vim-airline-themes'
     Plug 'ctrlpvim/ctrlp.vim'
     Plug 'sjl/gundo.vim'
+    Plug 'scrooloose/nerdtree'
 
     Plug 'ryanoasis/vim-devicons'
 
-    " Plug 'airblade/vim-gitgutter'
+    Plug 'airblade/vim-gitgutter'
 
     Plug 'henrik/vim-indexed-search'
     Plug 'bkad/CamelCaseMotion'
@@ -92,7 +93,8 @@
         
         set encoding=utf-8
         let g:Powerline_symbols = 'fancy'
-       
+        let g:airline_powerline_fonts = 1
+
         runtime! ftplugin/man.vim
         runtime! ftplugin/gzip.vim
         runtime! ftplugin/taglist.vim 
