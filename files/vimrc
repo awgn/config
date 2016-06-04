@@ -3,13 +3,11 @@
 " my dot.vimrc config (don't try this at home!) Nicola
 "
 
-" vundle  {
+" Plug {
 
     set nocompatible              " be iMproved, required
     filetype off                  " required
 
-    " set the runtime path to include Vundle and initialize
-    
     call plug#begin('~/.vim/bundle')
     
     if has("nvim")
@@ -20,7 +18,7 @@
 
     Plug 'maxbrunsfeld/vim-yankstack'    
      
-    Plug 'terryma/vim-multiple-cursors'
+    " Plug 'terryma/vim-multiple-cursors'
 
     Plug 'scrooloose/syntastic'
     Plug 'majutsushi/tagbar'
@@ -28,8 +26,10 @@
     Plug 'vim-airline/vim-airline-themes'
     Plug 'ctrlpvim/ctrlp.vim'
     Plug 'sjl/gundo.vim'
-    
-    Plug 'airblade/vim-gitgutter'
+
+    Plug 'ryanoasis/vim-devicons'
+
+    " Plug 'airblade/vim-gitgutter'
 
     Plug 'henrik/vim-indexed-search'
     Plug 'bkad/CamelCaseMotion'
@@ -60,8 +60,76 @@
 
 " }
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" general {
+" plugin config {
+
+        """ my C/++ ctags options...
+        
+        let g:my_ctags_options = [ '--sort=foldcase', '--languages=C,C++', '--c++-kinds=+plx', '--fields=+liaS', '--extra=+q', '-I __attribute__+' ]
+
+        """ this to avoid spurious highlight with C++11 lambdas 
+        
+        let c_no_curly_error = 1
+
+
+        """ tagbar
+        
+        let g:tagbar_width = 30
+        
+        """ clang completion...
+        
+        let g:clang_complete_auto   = 0
+        let g:clang_complete_copen  = 1
+        let g:clang_user_options    = '-std=c++1y'
+
+        """ ctrl+p
+        
+        let g:ctrlp_map = ''
+        let g:ctrlp_dotfiles = 0
+
+        """ powerline
+        
+        set encoding=utf-8
+        let g:Powerline_symbols = 'fancy'
+       
+        runtime! ftplugin/man.vim
+        runtime! ftplugin/gzip.vim
+        runtime! ftplugin/taglist.vim 
+
+        """ syntastic: C++/Haskell
+        
+        let g:syntastic_cpp_compiler = 'clang++'
+        let g:syntastic_cpp_compiler_options = ' -std=c++1y -stdlib=libc++'
+        let g:syntastic_haskell_hdevtools_args = '-g-isrc -g-Wall -g-cpp'
+
+        """ git-gutter
+    
+        let g:gitgutter_sign_column_always = 0
+        let g:gitgutter_realtime = 1
+        let g:gitgutter_eager = 1
+
+        """ vim-multiple-cursor
+
+        let g:multi_cursor_next_key='<C-n>'
+        let g:multi_cursor_prev_key='<C-m>'
+        let g:multi_cursor_skip_key='<C-x>'
+        let g:multi_cursor_quit_key='<Esc>'
+
+        """ yankstack
+
+        nmap <c-p> <Plug>yankstack_substitute_older_paste
+        nmap <c-P> <Plug>yankstack_substitute_newer_paste
+
+        """ misc...
+
+        let Tlist_Use_Right_Window  = 1
+        let g:load_doxygen_syntax   = 1
+"}
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" general config {
 
         syntax enable
 
@@ -140,6 +208,7 @@
         set spell
 
         set grepprg=cgrep
+        set grepformat=%f:%l:%c:%m
 
         " set ignorecase 
         " set smartcase  
@@ -176,73 +245,9 @@
 " }
  
 
-" plugin config {
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-        """ my C/++ ctags options...
-        
-        let g:my_ctags_options = [ '--sort=foldcase', '--languages=C,C++', '--c++-kinds=+plx', '--fields=+liaS', '--extra=+q', '-I __attribute__+' ]
-
-        """ this to avoid spurious highlight with C++11 lambdas 
-        
-        let c_no_curly_error = 1
-
-
-        """ tagbar
-        
-        let g:tagbar_width = 30
-        
-        """ clang completion...
-        
-        let g:clang_complete_auto   = 0
-        let g:clang_complete_copen  = 1
-        let g:clang_user_options    = '-std=c++1y'
-
-        """ ctrl+p
-        
-        let g:ctrlp_map = ''
-        let g:ctrlp_dotfiles = 0
-
-        """ powerline
-        
-        set encoding=utf-8
-        let g:Powerline_symbols = 'fancy'
-       
-        runtime! ftplugin/man.vim
-        runtime! ftplugin/gzip.vim
-        runtime! ftplugin/taglist.vim 
-
-        """ syntastic: C++/Haskell
-        
-        let g:syntastic_cpp_compiler = 'clang++'
-        let g:syntastic_cpp_compiler_options = ' -std=c++1y -stdlib=libc++'
-        let g:syntastic_haskell_hdevtools_args = '-g-isrc -g-Wall -g-cpp'
-
-        """ git-gutter
-    
-        let g:gitgutter_sign_column_always = 0
-        let g:gitgutter_realtime = 1
-        let g:gitgutter_eager = 1
-
-        """ vim-multiple-cursor
-
-        let g:multi_cursor_next_key='<C-n>'
-        let g:multi_cursor_prev_key='<C-m>'
-        let g:multi_cursor_skip_key='<C-x>'
-        let g:multi_cursor_quit_key='<Esc>'
-
-        """ yankstack
-
-        nmap <c-p> <Plug>yankstack_substitute_older_paste
-        nmap <c-P> <Plug>yankstack_substitute_newer_paste
-
-        """ misc...
-
-        let Tlist_Use_Right_Window  = 1
-        let g:load_doxygen_syntax   = 1
-"}
-
-
-" automatic {
+" automatic commands {
 
 if has("autocmd")
 
@@ -253,6 +258,9 @@ if has("autocmd")
         autocmd BufNewFile,BufRead *.cpp set filetype=cpp  
         autocmd BufNewFile,BufRead *.hpp set filetype=cpp  
         autocmd BufNewFile,BufRead *.hsc set filetype=haskell
+        
+        autocmd FileType make set noexpandtab
+        autocmd FileType make set shiftwidth=8
 
         " save time-consuming foldmethod=syntax while in insert mode... 
         
@@ -272,154 +280,28 @@ if has("autocmd")
         " clear trailing white-spaces (currently disabled: see
         " RemoveTrailingSpaces command)
         "
-        
         autocmd FileType cpp,c,haskell,make autocmd BufWritePre <buffer> :RemoveTrailingSpaces
 
-        autocmd FileType make set noexpandtab
-        autocmd FileType make set shiftwidth=8
-        
         autocmd BufWinEnter * call ResCur()
 
-        autocmd FileType haskell call LangHaskell()
-        autocmd FileType cpp     call LangCpp()
-        autocmd FileType c       call LangC()
+        autocmd FileType haskell call LangProfileHaskell()
+        autocmd FileType cpp     call LangProfileCpp()
+        autocmd FileType c       call LangProfileC()
 endif
 
 " }
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" functions {
-
-if !exists(":DiffOrig")
-        command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
-        \ | wincmd p | diffthis
-endif
-
-function! ResCur()
-        if line("'\"") <= line("$")
-                norm! g`"
-                return 1
-        endif
-endfunction
-
-" eat a char
-
-function Eatchar(pat)
-        let c = nr2char(getchar(0))
-        return (c =~ a:pat) ? '' : c
-endfunc
-
-" ctags functions 
-
-function! s:update_ctags()
-        exec ":silent !ctags -R " . join(g:my_ctags_options, ' ')    
-        exec ":redraw!"
-        echohl StatusLine | echo "Ctags updated." 
-endfunction
-
-" hasktags functions 
-
-function! s:update_htags ()
-        exec ":silent !hasktags -c --ignore-close-implementation ."   
-        exec ":redraw!"
-        echohl StatusLine | echo "Hasktags updated." 
-endfunction
-         
-
-command! UpdateCTags call s:update_ctags()
-command! UpdateHaskTags call s:update_htags()
-
-" http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window
-" toggles the quickfix window.
-
-function! QFixToggle(forced)
-  if exists("g:qfix_win") && a:forced == 0
-    cclose
-  else
-    copen
-  endif
-endfunction
-
-
-function! QuickFixFilenames()
-    let buffer_numbers = {}
-    for item in getqflist()
-        let buffer_numbers[item['bufnr']] = bufname(item['bufnr'])
-    endfor
-    return join(map(values(buffer_numbers), 'fnameescape(v:val)'))
-endfunction
-
-
-function! SearchWithSkip(pattern, flags, stopline, timeout, skip)
-"
-" Returns true if a match is found for {pattern}, but ignores matches
-" where {skip} evaluates to false. This allows you to do nifty things
-" like, say, only matching outside comments, only on odd-numbered lines,
-" or whatever else you like.
-"
-" Mimics the built-in search() function, but adds a {skip} expression
-" like that available in searchpair() and searchpairpos().
-" (See the Vim help on search() for details of the other parameters.)
-" 
-    " Note the current position, so that if there are no unskipped
-    " matches, the cursor can be restored to this location.
-    "
-    let l:matchpos = getpos('.')
-
-    " Loop as long as {pattern} continues to be found.
-    "
-    while search(a:pattern, a:flags, a:stopline, a:timeout) > 0
-
-        " If {skip} is true, ignore this match and continue searching.
-        "
-        if eval(a:skip)
-            continue
-        endif
-
-        " If we get here, {pattern} was found and {skip} is false,
-        " so this is a match we don't want to ignore. Update the
-        " match position and stop searching.
-        " 
-        let l:matchpos = getpos('.')
-        break
-
-    endwhile
-
-    " Jump to the position of the unskipped match, or to the original
-    " position if there wasn't one.
-    "
-    call setpos('.', l:matchpos)
-
-endfunction
-
-
-function! SearchOutside(synName, pattern)
-"
-" Searches for the specified pattern, but skips matches that
-" exist within the specified syntax region.
-"
-    call SearchWithSkip(a:pattern, '', '', '',
-        \ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "' . a:synName . '"' )
-
-endfunction
-
-
-function! SearchInside(synName, pattern)
-"
-" Searches for the specified pattern, but skips matches that don't
-" exist within the specified syntax region.
-"
-    call SearchWithSkip(a:pattern, '', '', '',
-        \ 'synIDattr(synID(line("."), col("."), 0), "name") !~? "' . a:synName . '"' )
-
-endfunction
-
-" }
-
-
 " command {
  
+    command! LangaugeC          set filetype=c          | call LangProfileC()
+    command! LangaugeCpp        set filetype=cpp        | call LangProfileCpp()
+    command! LangaugeHaskell    set filetype=haskell    | call LangProfileHaskell()
+
+    command! UpdateCTags        call s:update_ctags()
+    command! UpdateHaskTags     call s:update_htags()
+
     command! -nargs=+ -complete=command SearchOutside call SearchOutside(<f-args>)
     command! -nargs=+ -complete=command SearchInside  call SearchInside(<f-args>)
 
@@ -439,9 +321,11 @@ endfunction
 " }
 
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 " language_options {
 
-function LangC()
+function LangProfileC()
 
         setlocal tabstop=8
         setlocal shiftwidth=8
@@ -478,14 +362,14 @@ function LangC()
 
         nnoremap <F2>    :AssGen<CR>
         nnoremap <F4>    :UpdateCTags<CR>
-        nnoremap <F7>    :Make<CR>
+        nnoremap <F7>    :make<CR>
         nnoremap <F11>   :AssClangRun<CR>
         nnoremap <S-F11> :AssGccRun<CR>
         nnoremap <S-F10> :AssIncludeThis<CR>
         
 endfunction
 
-function LangCpp()
+function LangProfileCpp()
         
         cmap ;tf ?^{??(?,/^}/
         map <C-]> :exe "tj " . expand("<cword>") <CR>
@@ -524,7 +408,7 @@ function LangCpp()
         
         nnoremap <F2>    :AssGen<CR>
         nnoremap <F4>    :UpdateCTags<CR>
-        nnoremap <F7>    :Make<CR>
+        nnoremap <F7>    :make<CR>
         nnoremap <F11>   :AssClangRun<CR>
         nnoremap <S-F11> :AssGccRun<CR>
         nnoremap <S-F10> :AssIncludeThis<CR>
@@ -535,7 +419,7 @@ function LangCpp()
  
 endfunction
 
-function LangHaskell()
+function LangProfileHaskell()
          
          set makeprg=runhaskell\ Setup.hs\ build\ --ghc-options="-W"
  
@@ -592,6 +476,8 @@ function LangHaskell()
 endfunction
 
 " }
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " mapping {
         
@@ -664,4 +550,65 @@ endfunction
         map <Leader>hon  :%!xxd<CR>
         map <Leader>hoff :%!xxd -r<CR>       
 "}
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" functions {
+
+if !exists(":DiffOrig")
+        command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+        \ | wincmd p | diffthis
+endif
+
+function! ResCur()
+        if line("'\"") <= line("$")
+                norm! g`"
+                return 1
+        endif
+endfunction
+
+" eat a char
+
+function Eatchar(pat)
+        let c = nr2char(getchar(0))
+        return (c =~ a:pat) ? '' : c
+endfunc
+
+" Tags functions 
+
+function! s:update_ctags()
+        exec ":silent !ctags -R " . join(g:my_ctags_options, ' ')    
+        exec ":redraw!"
+        echohl StatusLine | echo "Ctags updated." 
+endfunction
+
+" hasktags functions 
+
+function! s:update_htags ()
+        exec ":silent !hasktags -c --ignore-close-implementation ."   
+        exec ":redraw!"
+        echohl StatusLine | echo "Hasktags updated." 
+endfunction
+         
+" http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window
+" toggles the quickfix window.
+
+function! QFixToggle(forced)
+  if exists("g:qfix_win") && a:forced == 0
+    cclose
+  else
+    copen
+  endif
+endfunction
+
+
+function! QuickFixFilenames()
+    let buffer_numbers = {}
+    for item in getqflist()
+        let buffer_numbers[item['bufnr']] = bufname(item['bufnr'])
+    endfor
+    return join(map(values(buffer_numbers), 'fnameescape(v:val)'))
+endfunction
+
 
