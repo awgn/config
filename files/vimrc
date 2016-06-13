@@ -14,11 +14,7 @@
         Plug 'benekastah/neomake'
     endif
 
-    " Plug 'gmarik/Vundle.vim'
-
     Plug 'maxbrunsfeld/vim-yankstack'    
-     
-    " Plug 'terryma/vim-multiple-cursors'
 
     Plug 'scrooloose/syntastic'
     Plug 'majutsushi/tagbar'
@@ -29,7 +25,6 @@
     Plug 'scrooloose/nerdtree'
 
     Plug 'ryanoasis/vim-devicons'
-
     Plug 'airblade/vim-gitgutter'
 
     Plug 'henrik/vim-indexed-search'
@@ -52,7 +47,8 @@
     
     Plug 'bitc/vim-hdevtools'
     Plug 'eagletmt/neco-ghc'
-    "Plug 'eagletmt/ghcmod-vim' -> replaced by hdevtools 
+    Plug 'Twinside/vim-hoogle'
+    Plug 'eagletmt/ghcmod-vim' 
 
     " Idris
     Plug 'idris-hackers/idris-vim'
@@ -104,6 +100,10 @@
         let g:syntastic_cpp_compiler = 'clang++'
         let g:syntastic_cpp_compiler_options = ' -std=c++1y -stdlib=libc++'
         let g:syntastic_haskell_hdevtools_args = '-g-isrc -g-Wall -g-cpp'
+
+        """ hdevtools
+
+        let g:hdevtools_options = '-g-isrc -g-Wall -g-cpp'
 
         """ git-gutter
     
@@ -362,12 +362,8 @@ function LangProfileC()
         iab __P __PRETTY_FUNCTION__
         iab __F __FUNCTION__
 
-        nnoremap <F2>    :AssGen<CR>
         nnoremap <F4>    :UpdateCTags<CR>
         nnoremap <F7>    :make<CR>
-        nnoremap <F11>   :AssClangRun<CR>
-        nnoremap <S-F11> :AssGccRun<CR>
-        nnoremap <S-F10> :AssIncludeThis<CR>
         
 endfunction
 
@@ -408,12 +404,8 @@ function LangProfileCpp()
 
         " C++ ass'instant: -> github.com/awgn/ass 
         
-        nnoremap <F2>    :AssGen<CR>
         nnoremap <F4>    :UpdateCTags<CR>
         nnoremap <F7>    :make<CR>
-        nnoremap <F11>   :AssClangRun<CR>
-        nnoremap <S-F11> :AssGccRun<CR>
-        nnoremap <S-F10> :AssIncludeThis<CR>
         
         " find the string in non-comment lines (C/C++)
         
@@ -431,7 +423,6 @@ function LangProfileHaskell()
          setlocal expandtab
  
          setlocal iskeyword=a-z,A-Z,48-57,_,'
-         setlocal omnifunc=necoghc#omnifunc
          
          " abbreviations...
          "
@@ -471,10 +462,23 @@ function LangProfileHaskell()
          nnoremap <buffer> <F1> :HdevtoolsType<CR>
          nnoremap <buffer> <silent> <F2> :HdevtoolsClear<CR>
          nnoremap <buffer> <silent> <F3> :HdevtoolsInfo<CR>
-         nnoremap <F4> :call UpdateHaskTags()<CR>
   
-         let g:hdevtools_options = '-g-isrc -g-Wall -g-cpp'
- 
+         " ghc-mod
+         "
+         
+         map <silent> tw :GhcModTypeInsert<CR>
+         map <silent> ts :GhcModSplitFunCase<CR>
+         map <silent> tq :GhcModType<CR>
+         map <silent> te :GhcModTypeClear<CR>
+
+         " necoghc
+         "
+         
+         let g:haskellmode_completion_ghc = 1
+         setlocal omnifunc=necoghc#omnifunc
+
+         nnoremap <F4> :call UpdateHaskTags()<CR>
+
 endfunction
 
 " }
