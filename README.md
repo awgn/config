@@ -1,1 +1,1 @@
-Collection of my configuration files.
+Collection of my configuration files!
