@@ -1,6 +1,6 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" my dot.vimrc config (don't try this at home!) Nicola
+" My dot.vimrc config (don't try this at home!) Nicola
 "
 
 " Plug {
@@ -9,12 +9,12 @@
     filetype off                  " required
 
     call plug#begin('~/.vim/bundle')
-    
+
     if has("nvim")
         Plug 'benekastah/neomake'
     endif
 
-    Plug 'maxbrunsfeld/vim-yankstack'    
+    Plug 'maxbrunsfeld/vim-yankstack'
 
     Plug 'scrooloose/syntastic'
     Plug 'majutsushi/tagbar'
@@ -23,6 +23,8 @@
     Plug 'ctrlpvim/ctrlp.vim'
     Plug 'sjl/gundo.vim'
     Plug 'scrooloose/nerdtree'
+
+    Plug 'nathanaelkane/vim-indent-guides'
 
     Plug 'ryanoasis/vim-devicons'
     Plug 'airblade/vim-gitgutter'
@@ -36,23 +38,33 @@
     Plug 'tpope/vim-dispatch'
     Plug 'tpope/vim-surround'
 
+    Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer'}
+
     Plug 'Shougo/vimproc.vim'
     " Plug 'Shougo/neocomplete.vim'
-    
+
     Plug 'triglav/vim-visual-increment'
     Plug 'nathanaelkane/vim-indent-guides'
     Plug 'henrik/vim-qargs'
 
     " Haskell
-    
+
     Plug 'bitc/vim-hdevtools'
     Plug 'eagletmt/neco-ghc'
+    Plug 'eagletmt/ghcmod-vim'
+    Plug 'raichoo/haskell-vim'
+
     Plug 'Twinside/vim-hoogle'
-    Plug 'eagletmt/ghcmod-vim' 
 
     " Idris
     Plug 'idris-hackers/idris-vim'
-    
+
+    " ColorTheme
+
+    Plug 'fcpg/vim-fahrenheit'
+    Plug 'NLKNguyen/papercolor-theme'
+    Plug 'rakr/vim-one'
+
     call plug#end()
 
 " }
@@ -62,41 +74,39 @@
 " plugin config {
 
         """ my C/++ ctags options...
-        
+
         let g:my_ctags_options = [ '--sort=foldcase', '--languages=C,C++', '--c++-kinds=+plx', '--fields=+liaS', '--extra=+q', '-I __attribute__+' ]
 
-        """ this to avoid spurious highlight with C++11 lambdas 
-        
+        """ this to avoid spurious highlight with C++11 lambdas
+
         let c_no_curly_error = 1
 
-
         """ tagbar
-        
+
         let g:tagbar_width = 30
-        
+
         """ clang completion...
-        
+
         let g:clang_complete_auto   = 0
         let g:clang_complete_copen  = 1
         let g:clang_user_options    = '-std=c++1y'
 
         """ ctrl+p
-        
+
         let g:ctrlp_map = ''
         let g:ctrlp_dotfiles = 0
 
         """ powerline
-        
+
         set encoding=utf-8
         let g:Powerline_symbols = 'fancy'
         let g:airline_powerline_fonts = 1
 
-        runtime! ftplugin/man.vim
-        runtime! ftplugin/gzip.vim
-        runtime! ftplugin/taglist.vim 
+        let g:airline_theme='one'
+        let g:airline_theme='molokai'
 
         """ syntastic: C++/Haskell
-        
+
         let g:syntastic_cpp_compiler = 'clang++'
         let g:syntastic_cpp_compiler_options = ' -std=c++1y -stdlib=libc++'
         let g:syntastic_haskell_hdevtools_args = '-g-isrc -g-Wall -g-cpp'
@@ -106,7 +116,7 @@
         let g:hdevtools_options = '-g-isrc -g-Wall -g-cpp'
 
         """ git-gutter
-    
+
         let g:gitgutter_sign_column_always = 0
         let g:gitgutter_realtime = 1
         let g:gitgutter_eager = 1
@@ -123,10 +133,33 @@
         nmap <c-p> <Plug>yankstack_substitute_older_paste
         nmap <c-P> <Plug>yankstack_substitute_newer_paste
 
+        """ YCM
+
+        let g:ycm_filetype_blacklist = {
+              \ 'tagbar' : 1,
+              \ 'qf' : 1,
+              \ 'notes' : 1,
+              \ 'markdown' : 1,
+              \ 'unite' : 1,
+              \ 'text' : 1,
+              \ 'vimwiki' : 1,
+              \ 'pandoc' : 1,
+              \ 'infolog' : 1,
+              \ 'mail' : 1
+              \}
+
+        let g:ycm_confirm_extra_conf = 0
+        let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf_new.py' 
+
         """ misc...
 
         let Tlist_Use_Right_Window  = 1
         let g:load_doxygen_syntax   = 1
+
+        """ ftplugin
+        runtime! ftplugin/man.vim
+        runtime! ftplugin/gzip.vim
+        runtime! ftplugin/taglist.vim
 "}
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -138,21 +171,30 @@
         filetype on
         filetype plugin on
         filetype indent on
-    
-        set shell=bash
-        set nocompatible        	
 
-        set backspace=indent,eol,start 
-        
+        set shell=bash
+        set nocompatible
+
+        set backspace=indent,eol,start
+
         set completeopt=menu,longest
         set complete=.,w,b,t,i
 
-        " set term=screen-256color
-        
+        """ tmux want this:
+
+        set term=screen-256color
+
+        set background=light
+        "set background=dark
+
+        " colorscheme fahrenheit
+        " colorscheme PaperColor
+        colorscheme one
+
         set shortmess+=at
- 
+
         set nofoldenable
-        set novisualbell                
+        set novisualbell
         set noerrorbells
         set hidden
         set lazyredraw
@@ -184,10 +226,10 @@
         set ruler
         set magic
         set mps+=<:> " this is great for C++ template meta-programming
-        
+
         set wildignore+=*/.git/*,*/.hg/*,*/.svn/* " Linux/MacOSX
         set wildignore+=*.o,*.so,*.ko,*.bak
-        
+
         set nowrap
         set guioptions=acm
 
@@ -197,10 +239,10 @@
         set stl=%f\ %m\ %r\ Line:\ %l/%L[%p%%]\ Col:\ %c\ Buf:\ #%n\ [%b][0x%B]
 
         set laststatus=2
-        
+
         set updatetime=2750
-        
-        set clipboard=unnamed
+        set clipboard=unnamedplus
+
         if has("nvim")
             set viminfo='10,<10000,:100,%,s1000,n~/.nviminfo
         else
@@ -212,8 +254,8 @@
         set grepprg=cgrep
         set grepformat=%f:%l:%c:%m
 
-        " set ignorecase 
-        " set smartcase  
+        " set ignorecase
+        " set smartcase
         " set infercase
 
         set path+=/usr/include
@@ -221,31 +263,25 @@
 
         " default tab and stuff
         "
-        set shiftwidth=4 
-        set tabstop=4 
-        set autoindent 
+        set shiftwidth=4
+        set tabstop=4
+        set autoindent
         set copyindent
-        set smartindent 
+        set smartindent
         set smarttab
 
-        " set t_Co=256
+        set t_Co=256
 
         set timeoutlen=1000 ttimeoutlen=50
 
-        let g:airline_theme='molokai'
-
         if has("gui_running")
                 set guifont=Terminus\ 10
-                " colorscheme github
-                colorscheme default
         else
-                " colorscheme github
-                colorscheme default
         endif
 
         set diffopt=filler,iwhite,context:10
 " }
- 
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -255,22 +291,22 @@ if has("autocmd")
 
         let g:c_syntax_for_h = 1
 
-        autocmd BufNewFile,BufRead *.c   set filetype=c   
-        autocmd BufNewFile,BufRead *.h   set filetype=c   
-        autocmd BufNewFile,BufRead *.cpp set filetype=cpp  
-        autocmd BufNewFile,BufRead *.hpp set filetype=cpp  
+        autocmd BufNewFile,BufRead *.c   set filetype=c
+        autocmd BufNewFile,BufRead *.h   set filetype=cpp
+        autocmd BufNewFile,BufRead *.cpp set filetype=cpp
+        autocmd BufNewFile,BufRead *.hpp set filetype=cpp
         autocmd BufNewFile,BufRead *.hsc set filetype=haskell
-        
+
         autocmd FileType make set noexpandtab
         autocmd FileType make set shiftwidth=8
 
-        " save time-consuming foldmethod=syntax while in insert mode... 
-        
+        " save time-consuming foldmethod=syntax while in insert mode...
+
         autocmd InsertEnter * if !exists('w:last_fdm') | let w:last_fdm=&foldmethod | setlocal foldmethod=manual | endif
         autocmd InsertLeave,WinLeave * if exists('w:last_fdm') | let &l:foldmethod=w:last_fdm | unlet w:last_fdm | endif
 
         " disable syntax on very huge files...
-        
+
         autocmd BufReadPre *  if getfsize(expand('<afile>')) > 1000000 | syntax off | endif
         autocmd BufEnter * set tags=~/.vim/system-tags,./tags,../tags,tags,TAGS
 
@@ -278,7 +314,7 @@ if has("autocmd")
         autocmd QuickFixCmdPost    l* nested lwindow
 
         autocmd FileType text setlocal textwidth=118
-        
+
         " clear trailing white-spaces (currently disabled: see
         " RemoveTrailingSpaces command)
         "
@@ -296,10 +332,10 @@ endif
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " command {
- 
-    command! LangaugeC          set filetype=c          | call LangProfileC()
-    command! LangaugeCpp        set filetype=cpp        | call LangProfileCpp()
-    command! LangaugeHaskell    set filetype=haskell    | call LangProfileHaskell()
+
+    command! LangaugeC          set filetype=c        | call LangProfileC()
+    command! LangaugeCpp        set filetype=cpp      | call LangProfileCpp()
+    command! LangaugeHaskell    set filetype=haskell  | call LangProfileHaskell()
 
     command! UpdateCTags        call s:update_ctags()
     command! UpdateHaskTags     call s:update_htags()
@@ -312,6 +348,8 @@ endif
     command! -nargs=0 -bar Qargs execute 'args' QuickFixFilenames()
 
     command! -bang -nargs=0 RemoveTrailingSpaces :%s/\s\+$//e
+
+    command! -nargs=* Mk GitGutterDisable | make <args> | GitGutterEnable
 
     " used to track the quickfix window
 
@@ -343,38 +381,47 @@ function LangProfileC()
 
         setlocal iskeyword=a-z,A-Z,48-57,_,'
         setlocal noexpandtab
-        
-        syn keyword cOperator likely unlikely 
+
+        syn keyword cOperator likely unlikely
         syn keyword cType u8 u16 u32 u64 s8 s16 s32 s64
 
         highlight default link LinuxError ErrorMsg
 
-        syn match LinuxError / \+\ze\t/     " spaces before tab
+        "syn match LinuxError / \+\ze\t/     " spaces before tab
         syn match LinuxError /\s\+$/        " trailing whitespaces
-        "syn match LinuxError /\%121v.\+/    " virtual column 121 and more
+        "syn match LinuxError /\%121v.\+/   " virtual column 121 and more
 
         iab intmain int<CR>main(int argc, char *argv[])<CR>{<CR>return 0;<CR>}<CR><UP><UP><RIGHT>
         iab #i #include <><Left><C-R>=Eatchar('\s')<CR>
         iab #I #include ""<Left><C-R>=Eatchar('\s')<CR>
-        iab #d #define 
+        iab #d #define
         iab #p #pragma once
 
         iab __P __PRETTY_FUNCTION__
         iab __F __FUNCTION__
 
-        nnoremap <F4>    :UpdateCTags<CR>
-        nnoremap <F7>    :make<CR>
+        " YcmCompleter
         
+        map <silent> tq :YcmCompleter GetType<CR>
+        map <silent> td :YcmCompleter GetDoc<CR>
+        map <silent> tp :YcmCompleter GetParent<CR>
+        map <silent> tf :YcmCompleter FixIt<CR>
+        map <silent> tg :YcmCompleter GoTo<CR>
+
+        nnoremap <F4>    :UpdateCTags<CR>
+        nnoremap <F7>    :GitGutterDisable \| make \| GitGutterEnable <CR>
+        nnoremap <S-F7>  :GitGutterDisable \| make -j4 \| GitGutterEnable <CR>
+
 endfunction
 
 function LangProfileCpp()
-        
+
         cmap ;tf ?^{??(?,/^}/
         map <C-]> :exe "tj " . expand("<cword>") <CR>
 
         setlocal cinoptions={0}0:0=4l1g0p0t0i0+0(0u2W4
-        setlocal shiftwidth=4 
-        setlocal tabstop=4 
+        setlocal shiftwidth=4
+        setlocal tabstop=4
         setlocal iskeyword=a-z,A-Z,48-57,_,'
         setlocal cms=//%s
 
@@ -383,7 +430,7 @@ function LangProfileCpp()
         iab intmain int<CR>main(int argc, char *argv[])<CR>{<CR>return 0;<CR>}<CR><UP><UP><RIGHT>
         iab #i #include <><Left><C-R>=Eatchar('\s')<CR>
         iab #I #include ""<Left><C-R>=Eatchar('\s')<CR>
-        iab #d #define 
+        iab #d #define
         iab #p #pragma once
 
         iab ns namespace<C-R>=Eatchar('\s')<CR>
@@ -402,34 +449,43 @@ function LangProfileCpp()
         iab __P __PRETTY_FUNCTION__
         iab __F __FUNCTION__
 
-        " C++ ass'instant: -> github.com/awgn/ass 
+
+        " YcmCompleter
         
+        map <silent> tq :YcmCompleter GetType<CR>
+        map <silent> td :YcmCompleter GetDoc<CR>
+        map <silent> tp :YcmCompleter GetParent<CR>
+        map <silent> tf :YcmCompleter FixIt<CR>
+        map <silent> tg :YcmCompleter GoTo<CR>
+
+
         nnoremap <F4>    :UpdateCTags<CR>
-        nnoremap <F7>    :make<CR>
-        
+        nnoremap <F7>    :GitGutterDisable \| make \| GitGutterEnable <CR>
+        nnoremap <S-F7>  :GitGutterDisable \| make -j4 \| GitGutterEnable <CR>
+
         " find the string in non-comment lines (C/C++)
-        
+
         nnoremap <leader>f :/\v((\/\*\|\/\/\|^\s*\*[^/]).*)@<!
- 
+
 endfunction
 
 function LangProfileHaskell()
-         
+
          set makeprg=runhaskell\ Setup.hs\ build\ --ghc-options="-W"
- 
-         setlocal tabstop=4 
-         setlocal softtabstop=4 
-         setlocal shiftwidth=4 
+
+         setlocal tabstop=4
+         setlocal softtabstop=4
+         setlocal shiftwidth=4
          setlocal expandtab
- 
+
          setlocal iskeyword=a-z,A-Z,48-57,_,'
-         
+
          " abbreviations...
          "
-        
+
          iab GHC    {-# LANGUAGE #-}<LEFT><LEFT><LEFT><LEFT>
 
-         iab GHCALL 
+         iab GHCALL
                     \<CR>{-# LANGUAGE ExistentialQuantification  #-}
                     \<CR>{-# LANGUAGE MultiParamTypeClasses      #-}
                     \<CR>{-# LANGUAGE FunctionalDependencies     #-}
@@ -451,21 +507,24 @@ function LangProfileHaskell()
                     \<CR>{-# LANGUAGE DeriveFunctor              #-}
                     \<CR>{-# LANGUAGE DeriveFoldable             #-}
                     \<CR>{-# LANGUAGE DeriveTraversable          #-}
-                    \<CR>{-# LANGUAGE GeneralizedNewtypeDeriving #-} 
-                    \<CR>{-# LANGUAGE TypeOperators              #-} 
-                    \<CR>{-# LANGUAGE TypeFamilies               #-} 
+                    \<CR>{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+                    \<CR>{-# LANGUAGE StandaloneDeriving         #-}
+                    \<CR>{-# LANGUAGE TypeOperators              #-}
+                    \<CR>{-# LANGUAGE TypeFamilies               #-}
+                    \<CR>{-# LANGUAGE DataKinds                  #-}
+                    \<CR>{-# LANGUAGE PolyKinds                  #-}
                     \<CR>{-# LANGUAGE GADTs                      #-}
                     \<CR>{-# LANGUAGE CPP                        #-}
- 
+
          " hdevtools...
          "
-         nnoremap <buffer> <F1> :HdevtoolsType<CR>
+         nnoremap <buffer>          <F1> :HdevtoolsType<CR>
          nnoremap <buffer> <silent> <F2> :HdevtoolsClear<CR>
          nnoremap <buffer> <silent> <F3> :HdevtoolsInfo<CR>
-  
+
          " ghc-mod
          "
-         
+
          map <silent> tw :GhcModTypeInsert<CR>
          map <silent> ts :GhcModSplitFunCase<CR>
          map <silent> tq :GhcModType<CR>
@@ -473,8 +532,10 @@ function LangProfileHaskell()
 
          " necoghc
          "
-         
+
          let g:haskellmode_completion_ghc = 1
+         let g:loaded_syntastic_haskell_hlint_checker = 1
+
          setlocal omnifunc=necoghc#omnifunc
 
          nnoremap <F4> :call UpdateHaskTags()<CR>
@@ -486,7 +547,7 @@ endfunction
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " mapping {
-        
+
         if has("nvim")
             tnoremap <Esc> <C-\><C-n>
         endif
@@ -502,59 +563,59 @@ endfunction
 
         " leaders...
         "
-        
+
         " nnoremap / /\v
         " nnoremap ? ?\v
-        
+
         nnoremap <leader>/ /\<\><Left><Left>
         nnoremap <leader>? ?\<\><Left><Left>
-        nnoremap <leader>c :/\(\<class\>\\|\<struct\>\)\s*[a-zA-Z_][a-zA-Z0-9_]*.*\_s*{<CR> 
-        
-        " eliminate ugly \r 
-        
+        nnoremap <leader>c :/\(\<class\>\\|\<struct\>\)\s*[a-zA-Z_][a-zA-Z0-9_]*.*\_s*{<CR>
+
+        " eliminate ugly \r
+
         nnoremap <leader>r :%s/\r//g<CR>
 
         " replace the world under cursor...
-        
+
         nnoremap <leader>s :%s/\<<C-R><C-W>\>/
-        
+
         " search the word under cursor...
-       
-        nnoremap <leader>g :grep -r -w <C-R><C-W> 
-        
-        
+
+        nnoremap <leader>g :grep -r -w <C-R><C-W>
+
+
         " prepare exact replace
-        
+
         nnoremap <leader>S :%s/\<\>/<Left><Left><Left>
 
         " disable arrows
-        
+
         map <up>    <nop>
         map <down>  <nop>
         map <left>  <nop>
         map <right> <nop>
 
         " disable annoying lowercase in visual mode.
-       
+
         xmap u <nop>
 
         " leader d -> delete the current line, leaving the default register
         " untouched
 
         nnoremap <leader>d "_dd
-        
+
         " D, delete a visual block using non default register
-        
+
         vnoremap D "_d
 
         " expand,  %% in the relative directory of the current buffer
-        
+
         cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
- 
+
         " hex editor...
-        
+
         map <Leader>hon  :%!xxd<CR>
-        map <Leader>hoff :%!xxd -r<CR>       
+        map <Leader>hoff :%!xxd -r<CR>
 "}
 
 
@@ -581,22 +642,22 @@ function Eatchar(pat)
         return (c =~ a:pat) ? '' : c
 endfunc
 
-" Tags functions 
+" Tags functions
 
 function! s:update_ctags()
-        exec ":silent !ctags -R " . join(g:my_ctags_options, ' ')    
+        exec ":silent !ctags -R " . join(g:my_ctags_options, ' ')
         exec ":redraw!"
-        echohl StatusLine | echo "Ctags updated." 
+        echohl StatusLine | echo "Ctags updated."
 endfunction
 
-" hasktags functions 
+" hasktags functions
 
 function! s:update_htags ()
-        exec ":silent !hasktags -c --ignore-close-implementation ."   
+        exec ":silent !hasktags -c --ignore-close-implementation ."
         exec ":redraw!"
-        echohl StatusLine | echo "Hasktags updated." 
+        echohl StatusLine | echo "Hasktags updated."
 endfunction
-         
+
 " http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window
 " toggles the quickfix window.
 
@@ -617,4 +678,19 @@ function! QuickFixFilenames()
     return join(map(values(buffer_numbers), 'fnameescape(v:val)'))
 endfunction
 
+
+" Zoom / Restore window.
+function! s:ZoomToggle() abort
+    if exists('t:zoomed') && t:zoomed
+        execute t:zoom_winrestcmd
+        let t:zoomed = 0
+    else
+        let t:zoom_winrestcmd = winrestcmd()
+        resize
+        vertical resize
+        let t:zoomed = 1
+    endif
+endfunction
+command! ZoomToggle call s:ZoomToggle()
+nnoremap <silent> <C-w>O :ZoomToggle<CR>
 
