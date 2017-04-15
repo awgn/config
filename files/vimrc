@@ -17,6 +17,8 @@
     Plug 'maxbrunsfeld/vim-yankstack'
 
     Plug 'scrooloose/syntastic'
+    "Plug 'w0rp/ale'
+
     Plug 'majutsushi/tagbar'
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
@@ -53,17 +55,23 @@
     Plug 'eagletmt/neco-ghc'
     Plug 'eagletmt/ghcmod-vim'
     Plug 'raichoo/haskell-vim'
-
     Plug 'Twinside/vim-hoogle'
 
     " Idris
     Plug 'idris-hackers/idris-vim'
 
-    " ColorTheme
-
+    " ColorThemes
+    
+    Plug 'AlessandroYorba/Sidonia'
+    Plug 'cocopon/iceberg.vim'
     Plug 'fcpg/vim-fahrenheit'
     Plug 'NLKNguyen/papercolor-theme'
     Plug 'rakr/vim-one'
+    Plug 'jacoborus/tender.vim'
+    Plug 'freeo/vim-kalisi'
+    Plug 'jordwalke/flatlandia'
+    Plug 'mhinz/vim-janah'
+    Plug 'brhs/butter'
 
     call plug#end()
 
@@ -103,13 +111,18 @@
         let g:airline_powerline_fonts = 1
 
         let g:airline_theme='one'
-        let g:airline_theme='molokai'
+        " let g:airline_theme='molokai'
 
         """ syntastic: C++/Haskell
 
         let g:syntastic_cpp_compiler = 'clang++'
         let g:syntastic_cpp_compiler_options = ' -std=c++1y -stdlib=libc++'
         let g:syntastic_haskell_hdevtools_args = '-g-isrc -g-Wall -g-cpp'
+
+        let g:syntastic_always_populate_loc_list = 1
+        let g:syntastic_auto_loc_list = 1
+        let g:syntastic_check_on_open = 1
+        let g:syntastic_check_on_wq = 0
 
         """ hdevtools
 
@@ -148,6 +161,7 @@
               \ 'mail' : 1
               \}
 
+        let g:ycm_show_diagnostics_ui = 1
         let g:ycm_confirm_extra_conf = 0
         let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf_new.py' 
 
@@ -162,9 +176,36 @@
         runtime! ftplugin/taglist.vim
 "}
 
+" colors {
+        
+        set background=dark
+        " set background=light
+
+        " set term=screen-256color
+        " set t_Co=256
+        
+        " For 23-bits terminal..
+        set termguicolors
+        
+        colorscheme iceberg
+        
+        " colorscheme sidonia
+        " colorscheme tender
+        " colorscheme fahrenheit
+        " colorscheme PaperColor
+        " colorscheme one
+        " colorscheme kalisi
+        " colorscheme flatlandia
+        " colorscheme butter
+        
+        " autocmd ColorScheme janah highlight Normal ctermbg=235
+        " colorscheme janah
+" }
+
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" general config {
+" general vim config {
 
         syntax enable
 
@@ -179,17 +220,6 @@
 
         set completeopt=menu,longest
         set complete=.,w,b,t,i
-
-        """ tmux want this:
-
-        set term=screen-256color
-
-        set background=light
-        "set background=dark
-
-        " colorscheme fahrenheit
-        " colorscheme PaperColor
-        colorscheme one
 
         set shortmess+=at
 
@@ -241,7 +271,7 @@
         set laststatus=2
 
         set updatetime=2750
-        set clipboard=unnamedplus
+        "set clipboard=unnamedplus
 
         if has("nvim")
             set viminfo='10,<10000,:100,%,s1000,n~/.nviminfo
@@ -254,8 +284,8 @@
         set grepprg=cgrep
         set grepformat=%f:%l:%c:%m
 
-        " set ignorecase
-        " set smartcase
+        set ignorecase
+        set smartcase
         " set infercase
 
         set path+=/usr/include
@@ -269,8 +299,6 @@
         set copyindent
         set smartindent
         set smarttab
-
-        set t_Co=256
 
         set timeoutlen=1000 ttimeoutlen=50
 
@@ -292,7 +320,7 @@ if has("autocmd")
         let g:c_syntax_for_h = 1
 
         autocmd BufNewFile,BufRead *.c   set filetype=c
-        autocmd BufNewFile,BufRead *.h   set filetype=cpp
+        autocmd BufNewFile,BufRead *.h   set filetype=c
         autocmd BufNewFile,BufRead *.cpp set filetype=cpp
         autocmd BufNewFile,BufRead *.hpp set filetype=cpp
         autocmd BufNewFile,BufRead *.hsc set filetype=haskell
