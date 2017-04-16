@@ -62,6 +62,7 @@
 
     " ColorThemes
     
+    Plug 'arcticicestudio/nord-vim'
     Plug 'AlessandroYorba/Sidonia'
     Plug 'cocopon/iceberg.vim'
     Plug 'fcpg/vim-fahrenheit'
@@ -121,7 +122,7 @@
 
         let g:syntastic_always_populate_loc_list = 1
         let g:syntastic_auto_loc_list = 1
-        let g:syntastic_check_on_open = 1
+        let g:syntastic_check_on_open = 0
         let g:syntastic_check_on_wq = 0
 
         """ hdevtools
@@ -178,17 +179,19 @@
 
 " colors {
         
-        set background=dark
-        " set background=light
-
         " set term=screen-256color
         " set t_Co=256
         
-        " For 23-bits terminal..
+        set background=dark
+        " set background=light
+
+        " For 24-bits terminal..
+        
         set termguicolors
-        
+        set t_ut=
+
         colorscheme iceberg
-        
+        " colorscheme nord        
         " colorscheme sidonia
         " colorscheme tender
         " colorscheme fahrenheit
