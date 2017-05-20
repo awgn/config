@@ -14,65 +14,64 @@
         Plug 'benekastah/neomake'
     endif
 
-    Plug 'maxbrunsfeld/vim-yankstack'
+   Plug 'maxbrunsfeld/vim-yankstack'
 
-    Plug 'scrooloose/syntastic'
-    "Plug 'w0rp/ale'
+   Plug 'junegunn/vim-plug'
+   Plug 'scrooloose/syntastic'
+      " Plug 'w0rp/ale'
 
-    Plug 'majutsushi/tagbar'
-    Plug 'vim-airline/vim-airline'
-    Plug 'vim-airline/vim-airline-themes'
-    Plug 'ctrlpvim/ctrlp.vim'
-    Plug 'sjl/gundo.vim'
-    Plug 'scrooloose/nerdtree'
+   Plug 'majutsushi/tagbar'
+   Plug 'vim-airline/vim-airline'
+   Plug 'vim-airline/vim-airline-themes'
+   Plug 'ctrlpvim/ctrlp.vim'
+   Plug 'scrooloose/nerdtree'
+   Plug 'sjl/gundo.vim'
 
-    Plug 'nathanaelkane/vim-indent-guides'
+   Plug 'ryanoasis/vim-devicons'
+   Plug 'airblade/vim-gitgutter'
 
-    Plug 'ryanoasis/vim-devicons'
-    Plug 'airblade/vim-gitgutter'
+   Plug 'henrik/vim-indexed-search'
+   Plug 'bkad/CamelCaseMotion'
 
-    Plug 'henrik/vim-indexed-search'
-    Plug 'bkad/CamelCaseMotion'
+   Plug 'tpope/vim-fugitive'
+   Plug 'tpope/vim-abolish'
+   Plug 'tpope/vim-commentary'
+   Plug 'tpope/vim-dispatch'
+   Plug 'tpope/vim-surround'
 
-    Plug 'tpope/vim-fugitive'
-    Plug 'tpope/vim-abolish'
-    Plug 'tpope/vim-commentary'
-    Plug 'tpope/vim-dispatch'
-    Plug 'tpope/vim-surround'
+   Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer'}
 
-    Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer'}
+   Plug 'Shougo/vimproc.vim', {'do' : 'make'} 
 
-    Plug 'Shougo/vimproc.vim'
-    " Plug 'Shougo/neocomplete.vim'
+   " Plug 'Shougo/neocomplete.vim'
 
-    Plug 'triglav/vim-visual-increment'
-    Plug 'nathanaelkane/vim-indent-guides'
-    Plug 'henrik/vim-qargs'
+   Plug 'triglav/vim-visual-increment'
+   Plug 'henrik/vim-qargs'
 
-    " Haskell
+   " Haskell
 
-    Plug 'bitc/vim-hdevtools'
-    Plug 'eagletmt/neco-ghc'
-    Plug 'eagletmt/ghcmod-vim'
-    Plug 'raichoo/haskell-vim'
-    Plug 'Twinside/vim-hoogle'
+   Plug 'bitc/vim-hdevtools'
+   Plug 'eagletmt/neco-ghc'
+   Plug 'eagletmt/ghcmod-vim'
+   Plug 'raichoo/haskell-vim'
+   Plug 'Twinside/vim-hoogle'
 
-    " Idris
-    Plug 'idris-hackers/idris-vim'
+   " Idris
+   Plug 'idris-hackers/idris-vim'
 
-    " ColorThemes
-    
-    Plug 'arcticicestudio/nord-vim'
-    Plug 'AlessandroYorba/Sidonia'
-    Plug 'cocopon/iceberg.vim'
-    Plug 'fcpg/vim-fahrenheit'
-    Plug 'NLKNguyen/papercolor-theme'
-    Plug 'rakr/vim-one'
-    Plug 'jacoborus/tender.vim'
-    Plug 'freeo/vim-kalisi'
-    Plug 'jordwalke/flatlandia'
-    Plug 'mhinz/vim-janah'
-    Plug 'brhs/butter'
+   " ColorThemes
+   
+   Plug 'arcticicestudio/nord-vim'
+   " Plug 'AlessandroYorba/Sidonia'
+   Plug 'cocopon/iceberg.vim'
+   Plug 'fcpg/vim-fahrenheit'
+   Plug 'NLKNguyen/papercolor-theme'
+   Plug 'rakr/vim-one'
+   Plug 'jacoborus/tender.vim'
+   Plug 'freeo/vim-kalisi'
+   Plug 'jordwalke/flatlandia'
+   Plug 'mhinz/vim-janah'
+   Plug 'brhs/butter'
 
     call plug#end()
 
