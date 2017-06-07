@@ -25,8 +25,8 @@ set -b
 
 export HISTIGNORE="&:[bf]g:exit"
 
-HISTSIZE=10000000
-HISTFILESIZE=100000
+HISTSIZE=-1
+HISTFILESIZE=1000000
 
 # make less more friendly for non-text input files, see lesspipe(1)
 #[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
@@ -92,6 +92,14 @@ fi
 #alias la='ls -A'
 #alias l='ls -CF'
 
+alias mkae='make'
+alias kmae='make'
+alias meka='make'
+alias meak='make'
+alias mk='make'
+alias iv='vi'
+
+
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
@@ -113,7 +121,7 @@ if ! shopt -oq posix; then
 fi
  
 export CDPATH='.:/opt:~:~/CommProve:~/GitHub/:~/GitLab/:~/BitBucket:~/Codes'
-export PATH="/root/.local/bin:/root/.cabal/bin/:${PATH}:/opt/PFQ/sandbox/bin/:/usr/local/bin/p4v-2015.2.1315639/bin/"
+export PATH="/root/.local/bin:/root/.cabal/bin/:/usr/local/bin/p4v-2015.2.1315639/bin/:/snap/bin/:${PATH}"
 export COLUMNS
 
 export HISTTIMEFORMAT="%d/%m/%y %T "
@@ -131,8 +139,22 @@ function refreshdisp {
         export $(tmux show-environment | grep DISPLAY=)
     fi
 }
+ 
+# trap 'refreshdisp' DEBUG
 
-trap 'refreshdisp' DEBUG
 trap 'echo Exit $?' ERR
+
+#let cd also pushd directories into stack. Use popd to reverse stack
+
+function cd ()
+{
+    if [ "$1" == "--" ]; then
+        popd
+    else
+        pushd ${PWD} &> /dev/null   #dont display current stack 
+        builtin cd $1
+    fi
+}
+
 
 
