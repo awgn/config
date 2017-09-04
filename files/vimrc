@@ -13,65 +13,94 @@
     if has("nvim")
         Plug 'benekastah/neomake'
     endif
+    
+    Plug 'junegunn/vim-plug'
 
-   Plug 'maxbrunsfeld/vim-yankstack'
+    Plug 'maxbrunsfeld/vim-yankstack'
 
-   Plug 'junegunn/vim-plug'
-   Plug 'scrooloose/syntastic'
-      " Plug 'w0rp/ale'
+    Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer'}
+    
+    Plug 'scrooloose/syntastic'
+    " Plug 'w0rp/ale'
 
-   Plug 'majutsushi/tagbar'
-   Plug 'vim-airline/vim-airline'
-   Plug 'vim-airline/vim-airline-themes'
-   Plug 'ctrlpvim/ctrlp.vim'
-   Plug 'scrooloose/nerdtree'
-   Plug 'sjl/gundo.vim'
+    Plug 'majutsushi/tagbar'
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+    Plug 'ctrlpvim/ctrlp.vim'
+    Plug 'scrooloose/nerdtree'
+    Plug 'sjl/gundo.vim'
 
-   Plug 'ryanoasis/vim-devicons'
-   Plug 'airblade/vim-gitgutter'
+    " differences with style
+    "
+    Plug 'airblade/vim-gitgutter'
+    Plug 'mhinz/vim-signify'
+    
+    " motion...
+    "
+    Plug 'bkad/CamelCaseMotion'
+    Plug 'henrik/vim-indexed-search'
 
-   Plug 'henrik/vim-indexed-search'
-   Plug 'bkad/CamelCaseMotion'
+    Plug 'tpope/vim-fugitive'
+    Plug 'tpope/vim-abolish'
+    Plug 'tpope/vim-commentary'
+    Plug 'tpope/vim-dispatch'
+    Plug 'tpope/vim-surround'
+    
+    Plug 'Shougo/vimproc.vim', {'do' : 'make'} 
 
-   Plug 'tpope/vim-fugitive'
-   Plug 'tpope/vim-abolish'
-   Plug 'tpope/vim-commentary'
-   Plug 'tpope/vim-dispatch'
-   Plug 'tpope/vim-surround'
+    Plug 'vim-scripts/highlight.vim'
 
-   Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer'}
+    " colorscheme switcher requires vim-misc
+    Plug 'xolox/vim-colorscheme-switcher'
+    Plug 'xolox/vim-misc'
 
-   Plug 'Shougo/vimproc.vim', {'do' : 'make'} 
+    Plug 'triglav/vim-visual-increment'
+    Plug 'henrik/vim-qargs'
 
-   " Plug 'Shougo/neocomplete.vim'
+    Plug 'sheerun/vim-polyglot'
 
-   Plug 'triglav/vim-visual-increment'
-   Plug 'henrik/vim-qargs'
+    " Haskell
 
-   " Haskell
+    Plug 'bitc/vim-hdevtools'
+    Plug 'eagletmt/neco-ghc'
+    Plug 'eagletmt/ghcmod-vim'
+    " Plug 'raichoo/haskell-vim'
+    Plug 'Twinside/vim-hoogle'
 
-   Plug 'bitc/vim-hdevtools'
-   Plug 'eagletmt/neco-ghc'
-   Plug 'eagletmt/ghcmod-vim'
-   Plug 'raichoo/haskell-vim'
-   Plug 'Twinside/vim-hoogle'
+    " Idris
+    Plug 'idris-hackers/idris-vim'
 
-   " Idris
-   Plug 'idris-hackers/idris-vim'
+    " Hackernews
+    Plug 'ryanss/vim-hackernews'
 
-   " ColorThemes
-   
-   Plug 'arcticicestudio/nord-vim'
-   " Plug 'AlessandroYorba/Sidonia'
-   Plug 'cocopon/iceberg.vim'
-   Plug 'fcpg/vim-fahrenheit'
-   Plug 'NLKNguyen/papercolor-theme'
-   Plug 'rakr/vim-one'
-   Plug 'jacoborus/tender.vim'
-   Plug 'freeo/vim-kalisi'
-   Plug 'jordwalke/flatlandia'
-   Plug 'mhinz/vim-janah'
-   Plug 'brhs/butter'
+    " ColorThemes
+    
+    Plug 'AlessandroYorba/Arcadia'
+    Plug 'AlessandroYorba/Alduin'
+    Plug 'AlessandroYorba/Sierra'
+    Plug 'AlessandroYorba/Despacio'
+
+    Plug 'tyrannicaltoucan/vim-deep-space'
+    Plug 'dracula/vim'
+    Plug 'arcticicestudio/nord-vim'
+    Plug 'cocopon/iceberg.vim'
+    Plug 'fcpg/vim-fahrenheit'
+    Plug 'NLKNguyen/papercolor-theme'
+    Plug 'rakr/vim-one'
+    Plug 'jacoborus/tender.vim'
+    Plug 'freeo/vim-kalisi'
+    Plug 'jordwalke/flatlandia'
+    Plug 'mhinz/vim-janah'
+    Plug 'brhs/butter'
+    Plug 'tyrannicaltoucan/vim-quantum'
+    Plug 'joshdick/onedark.vim'
+    Plug 'rakr/vim-two-firewatch'
+    Plug 'cseelus/vim-colors-clearance'
+    Plug 'w0ng/vim-hybrid'
+    Plug 'chriskempson/vim-tomorrow-theme'
+    Plug 'morhetz/gruvbox'
+    
+    Plug 'ryanoasis/vim-devicons'
 
     call plug#end()
 
@@ -107,23 +136,24 @@
         """ powerline
 
         set encoding=utf-8
-        let g:Powerline_symbols = 'fancy'
-        let g:airline_powerline_fonts = 1
 
-        let g:airline_theme='one'
+        let g:airline_powerline_fonts = 1
+        " let g:airline_theme='one'
         " let g:airline_theme='molokai'
 
         """ syntastic: C++/Haskell
 
+        let g:syntastic_cpp_checkers = ["cppcheck", "oclint"]
         let g:syntastic_cpp_compiler = 'clang++'
         let g:syntastic_cpp_compiler_options = ' -std=c++1y -stdlib=libc++'
-        let g:syntastic_haskell_hdevtools_args = '-g-isrc -g-Wall -g-cpp'
-
+        
         let g:syntastic_always_populate_loc_list = 1
         let g:syntastic_auto_loc_list = 1
         let g:syntastic_check_on_open = 0
         let g:syntastic_check_on_wq = 0
 
+        let g:syntastic_haskell_hdevtools_args = '-g-isrc -g-Wall -g-cpp'
+        
         """ hdevtools
 
         let g:hdevtools_options = '-g-isrc -g-Wall -g-cpp'
@@ -161,9 +191,30 @@
               \ 'mail' : 1
               \}
 
-        let g:ycm_show_diagnostics_ui = 1
+        let g:ycm_register_as_syntastic_checker = 1 "default 1
+		let g:Show_diagnostics_ui = 1 "default 1
+
+		let g:ycm_enable_diagnostic_signs = 1
+		let g:ycm_enable_diagnostic_highlighting = 1
+        let g:ycm_always_populate_location_list = 1 "default 0
+        let g:ycm_open_loclist_on_ycm_diags = 1 "default 1
+
+		let g:ycm_complete_in_strings = 1 "default 1
+		let g:ycm_collect_identifiers_from_tags_files = 0 "default 0
+		let g:ycm_path_to_python_interpreter = '' "default ''
+
+		let g:ycm_server_use_vim_stdout = 0 "default 0 (logging to console)
+		let g:ycm_server_log_level = 'info' "default info
+
+        let g:ycm_error_symbol = '>>'
+        let g:ycm_warning_symbol = '~~'
+
         let g:ycm_confirm_extra_conf = 0
         let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf_new.py' 
+
+        """ ALE
+
+        let g:airline#extensions#ale#enabled = 1
 
         """ misc...
 
@@ -180,25 +231,35 @@
         
         " set term=screen-256color
         " set t_Co=256
-        
-        set background=dark
-        " set background=light
 
         " For 24-bits terminal..
         
         set termguicolors
         set t_ut=
+        
+        set background=dark
+        " set background=light
+        
+        colorscheme deep-space
+        " colorscheme dracula
+        " colorscheme janah
 
-        colorscheme iceberg
-        " colorscheme nord        
+        " colorscheme Tomorrow-Night-Eighties
+        " colorscheme flatlandia
+
+        " colorscheme two-firewatch
+        " colorscheme onedark
+        " colorscheme quantum
         " colorscheme sidonia
+        " colorscheme iceberg
+        " colorscheme butter
+        "
+        " colorscheme nord        
         " colorscheme tender
         " colorscheme fahrenheit
-        " colorscheme PaperColor
         " colorscheme one
         " colorscheme kalisi
-        " colorscheme flatlandia
-        " colorscheme butter
+        " colorscheme PaperColor
         
         " autocmd ColorScheme janah highlight Normal ctermbg=235
         " colorscheme janah
@@ -325,6 +386,11 @@ if has("autocmd")
         autocmd BufNewFile,BufRead *.h   set filetype=c
         autocmd BufNewFile,BufRead *.cpp set filetype=cpp
         autocmd BufNewFile,BufRead *.hpp set filetype=cpp
+
+        autocmd BufNewFile,BufRead *.ccc set filetype=cpp
+        autocmd BufNewFile,BufRead *.hcc set filetype=cpp
+
+        autocmd BufNewFile,BufRead *.hs  set filetype=haskell
         autocmd BufNewFile,BufRead *.hsc set filetype=haskell
 
         autocmd FileType make set noexpandtab
@@ -352,9 +418,10 @@ if has("autocmd")
 
         autocmd BufWinEnter * call ResCur()
 
-        autocmd FileType haskell call LangProfileHaskell()
-        autocmd FileType cpp     call LangProfileCpp()
-        autocmd FileType c       call LangProfileC()
+        autocmd FileType haskell call LangHaskell()
+        autocmd FileType cpp     call LangCpp()
+        autocmd FileType c       call LangC()
+
 endif
 
 " }
@@ -363,9 +430,9 @@ endif
 
 " command {
 
-    command! LangaugeC          set filetype=c        | call LangProfileC()
-    command! LangaugeCpp        set filetype=cpp      | call LangProfileCpp()
-    command! LangaugeHaskell    set filetype=haskell  | call LangProfileHaskell()
+    command! LangaugeC          set filetype=c        | call LangC()
+    command! LangaugeCpp        set filetype=cpp      | call LangCpp()
+    command! LangaugeHaskell    set filetype=haskell  | call LangHaskell()
 
     command! UpdateCTags        call s:update_ctags()
     command! UpdateHaskTags     call s:update_htags()
@@ -395,13 +462,12 @@ endif
 
 " language_options {
 
-function LangProfileC()
+function LangC()
 
         setlocal tabstop=8
         setlocal shiftwidth=8
         setlocal softtabstop=8
         setlocal textwidth=120
-        setlocal noexpandtab
 
         setlocal cindent
         setlocal formatoptions=tcqlron
@@ -410,7 +476,6 @@ function LangProfileC()
         cmap ;tf ?^{??(?,/^}/
 
         setlocal iskeyword=a-z,A-Z,48-57,_,'
-        setlocal noexpandtab
 
         syn keyword cOperator likely unlikely
         syn keyword cType u8 u16 u32 u64 s8 s16 s32 s64
@@ -444,7 +509,7 @@ function LangProfileC()
 
 endfunction
 
-function LangProfileCpp()
+function LangCpp()
 
         cmap ;tf ?^{??(?,/^}/
         map <C-]> :exe "tj " . expand("<cword>") <CR>
@@ -488,7 +553,6 @@ function LangProfileCpp()
         map <silent> tf :YcmCompleter FixIt<CR>
         map <silent> tg :YcmCompleter GoTo<CR>
 
-
         nnoremap <F4>    :UpdateCTags<CR>
         nnoremap <F7>    :GitGutterDisable \| make \| GitGutterEnable <CR>
         nnoremap <S-F7>  :GitGutterDisable \| make -j4 \| GitGutterEnable <CR>
@@ -499,9 +563,9 @@ function LangProfileCpp()
 
 endfunction
 
-function LangProfileHaskell()
+function LangHaskell()
 
-         set makeprg=runhaskell\ Setup.hs\ build\ --ghc-options="-W"
+         set makeprg=stack\ build\ --ghc-options="-W"
 
          setlocal tabstop=4
          setlocal softtabstop=4
@@ -563,10 +627,12 @@ function LangProfileHaskell()
          " necoghc
          "
 
-         let g:haskellmode_completion_ghc = 1
          let g:loaded_syntastic_haskell_hlint_checker = 1
 
-         setlocal omnifunc=necoghc#omnifunc
+         " Disable haskell-vim omnifunc
+
+         let g:haskellmode_completion_ghc = 0
+         autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
 
          nnoremap <F4> :call UpdateHaskTags()<CR>
 
@@ -586,7 +652,7 @@ endfunction
         "
         nnoremap <F5>    :cprev<CR>
         nnoremap <F6>    :cnext<CR>
-        nnoremap <F8>    :QFix<CR>
+        " nnoremap <F8>    :QFix<CR>
         nnoremap <F9>    :NERDTreeToggle<CR>
         nnoremap <F10>   :GundoToggle<CR>
         nnoremap <F12>   :TagbarToggle<CR>
@@ -646,6 +712,12 @@ endfunction
 
         map <Leader>hon  :%!xxd<CR>
         map <Leader>hoff :%!xxd -r<CR>
+
+        " ALE
+        "
+        nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+        nmap <silent> <C-j> <Plug>(ale_next_wrap)
+
 "}
 
 
