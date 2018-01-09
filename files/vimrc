@@ -5,6 +5,8 @@
 
 " Plug {
 
+    let g:ale_emit_conflict_warnings = 0
+
     set nocompatible              " be iMproved, required
     filetype off                  " required
 
@@ -18,10 +20,11 @@
 
     Plug 'maxbrunsfeld/vim-yankstack'
 
-    Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer'}
+    " Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer'}
+    "
+    Plug 'w0rp/ale' 
     
     Plug 'scrooloose/syntastic'
-    " Plug 'w0rp/ale'
 
     Plug 'majutsushi/tagbar'
     Plug 'vim-airline/vim-airline'
@@ -33,13 +36,14 @@
     " differences with style
     "
     Plug 'airblade/vim-gitgutter'
-    Plug 'mhinz/vim-signify'
     
     " motion...
     "
     Plug 'bkad/CamelCaseMotion'
     Plug 'henrik/vim-indexed-search'
 
+    " Tpope
+    "
     Plug 'tpope/vim-fugitive'
     Plug 'tpope/vim-abolish'
     Plug 'tpope/vim-commentary'
@@ -57,24 +61,28 @@
     Plug 'triglav/vim-visual-increment'
     Plug 'henrik/vim-qargs'
 
-    Plug 'sheerun/vim-polyglot'
-
     " Haskell
 
     Plug 'bitc/vim-hdevtools'
-    Plug 'eagletmt/neco-ghc'
     Plug 'eagletmt/ghcmod-vim'
-    " Plug 'raichoo/haskell-vim'
+    Plug 'eagletmt/neco-ghc'
     Plug 'Twinside/vim-hoogle'
 
     " Idris
     Plug 'idris-hackers/idris-vim'
 
+    " Cpp
+    "
+    Plug 'bfrg/vim-cpp-modern'
+
     " Hackernews
     Plug 'ryanss/vim-hackernews'
 
+    """"""""""""""""""""""""""""""""""""""
     " ColorThemes
     
+    Plug 'octol/vim-cpp-enhanced-highlight'
+
     Plug 'AlessandroYorba/Arcadia'
     Plug 'AlessandroYorba/Alduin'
     Plug 'AlessandroYorba/Sierra'
@@ -91,7 +99,6 @@
     Plug 'freeo/vim-kalisi'
     Plug 'jordwalke/flatlandia'
     Plug 'mhinz/vim-janah'
-    Plug 'brhs/butter'
     Plug 'tyrannicaltoucan/vim-quantum'
     Plug 'joshdick/onedark.vim'
     Plug 'rakr/vim-two-firewatch'
@@ -99,7 +106,8 @@
     Plug 'w0ng/vim-hybrid'
     Plug 'chriskempson/vim-tomorrow-theme'
     Plug 'morhetz/gruvbox'
-    
+    Plug 'raphamorim/lucario'
+
     Plug 'ryanoasis/vim-devicons'
 
     call plug#end()
@@ -126,7 +134,7 @@
 
         let g:clang_complete_auto   = 0
         let g:clang_complete_copen  = 1
-        let g:clang_user_options    = '-std=c++1y'
+        let g:clang_user_options    = '-std=c++14'
 
         """ ctrl+p
 
@@ -145,18 +153,17 @@
 
         let g:syntastic_cpp_checkers = ["cppcheck", "oclint"]
         let g:syntastic_cpp_compiler = 'clang++'
-        let g:syntastic_cpp_compiler_options = ' -std=c++1y -stdlib=libc++'
+        let g:syntastic_cpp_compiler_options = ' -std=c++14 -stdlib=libc++'
         
         let g:syntastic_always_populate_loc_list = 1
         let g:syntastic_auto_loc_list = 1
         let g:syntastic_check_on_open = 0
         let g:syntastic_check_on_wq = 0
-
-        let g:syntastic_haskell_hdevtools_args = '-g-isrc -g-Wall -g-cpp'
         
         """ hdevtools
 
-        let g:hdevtools_options = '-g-isrc -g-Wall -g-cpp'
+        let g:syntastic_haskell_hdevtools_args = '-g-isrc -g-Wall -g-cpp'
+        let g:syntsatic_disable_ghcmod_checker = 1
 
         """ git-gutter
 
@@ -216,6 +223,18 @@
 
         let g:airline#extensions#ale#enabled = 1
 
+        let g:ale_lint_on_enter = 1
+
+        let g:ale_c_build_dir=''
+
+        let g:ale_cpp_clangtidy_options='-std=c++14'
+        let g:ale_cpp_clangtidy_checks=['-*,bugprone*,boost*,cppcore*,clang-analyzer*,modernize*,misc*,performance*']
+
+        let g:ale_linters = {
+            \'haskell': ['stack-ghc-mod', 'hdevtools', 'hlint', 'stack-build'],
+            \'cpp':     ['clangtidy'] 
+            \}
+
         """ misc...
 
         let Tlist_Use_Right_Window  = 1
@@ -229,40 +248,15 @@
 
 " colors {
         
-        " set term=screen-256color
-        " set t_Co=256
-
-        " For 24-bits terminal..
-        
+        set term=xterm-256color
+        set t_Co=256
         set termguicolors
+
+        set mouse=a
         set t_ut=
-        
+
         set background=dark
-        " set background=light
-        
-        colorscheme deep-space
-        " colorscheme dracula
-        " colorscheme janah
-
-        " colorscheme Tomorrow-Night-Eighties
-        " colorscheme flatlandia
-
-        " colorscheme two-firewatch
-        " colorscheme onedark
-        " colorscheme quantum
-        " colorscheme sidonia
-        " colorscheme iceberg
-        " colorscheme butter
-        "
-        " colorscheme nord        
-        " colorscheme tender
-        " colorscheme fahrenheit
-        " colorscheme one
-        " colorscheme kalisi
-        " colorscheme PaperColor
-        
-        " autocmd ColorScheme janah highlight Normal ctermbg=235
-        " colorscheme janah
+        colorscheme nord
 " }
 
 
@@ -334,7 +328,7 @@
         set laststatus=2
 
         set updatetime=2750
-        "set clipboard=unnamedplus
+        set clipboard=unnamedplus
 
         if has("nvim")
             set viminfo='10,<10000,:100,%,s1000,n~/.nviminfo
@@ -349,7 +343,7 @@
 
         set ignorecase
         set smartcase
-        " set infercase
+        set infercase
 
         set path+=/usr/include
         set path+=/usr/include/c++/4.9
@@ -365,10 +359,10 @@
 
         set timeoutlen=1000 ttimeoutlen=50
 
-        if has("gui_running")
-                set guifont=Terminus\ 10
-        else
-        endif
+        "if has("gui_running")
+        "        set guifont=Terminus\ 10
+        "else
+        "endif
 
         set diffopt=filler,iwhite,context:10
 " }
@@ -464,6 +458,8 @@ endif
 
 function LangC()
 
+        set number
+
         setlocal tabstop=8
         setlocal shiftwidth=8
         setlocal softtabstop=8
@@ -510,6 +506,8 @@ function LangC()
 endfunction
 
 function LangCpp()
+
+        set number
 
         cmap ;tf ?^{??(?,/^}/
         map <C-]> :exe "tj " . expand("<cword>") <CR>
@@ -565,6 +563,8 @@ endfunction
 
 function LangHaskell()
 
+         set number
+
          set makeprg=stack\ build\ --ghc-options="-W"
 
          setlocal tabstop=4
@@ -618,16 +618,12 @@ function LangHaskell()
 
          " ghc-mod
          "
-
          map <silent> tw :GhcModTypeInsert<CR>
          map <silent> ts :GhcModSplitFunCase<CR>
          map <silent> tq :GhcModType<CR>
          map <silent> te :GhcModTypeClear<CR>
 
-         " necoghc
-         "
-
-         let g:loaded_syntastic_haskell_hlint_checker = 1
+         " let g:loaded_syntastic_haskell_hlint_checker = 1
 
          " Disable haskell-vim omnifunc
 
@@ -650,9 +646,9 @@ endfunction
 
         " general keys...
         "
-        nnoremap <F5>    :cprev<CR>
+        nnoremap <S-F6>  :cprev<CR>
         nnoremap <F6>    :cnext<CR>
-        " nnoremap <F8>    :QFix<CR>
+
         nnoremap <F9>    :NERDTreeToggle<CR>
         nnoremap <F10>   :GundoToggle<CR>
         nnoremap <F12>   :TagbarToggle<CR>
